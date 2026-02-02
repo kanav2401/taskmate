@@ -1,3 +1,3 @@
-export default function Page() {
-  return <h1>Page works</h1>;
+export default function BrowseTasks() {
+  return <h1 style={{ padding: "40px" }}>Browse Tasks</h1>;
 }

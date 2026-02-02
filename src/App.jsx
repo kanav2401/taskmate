@@ -4,7 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import BrowseTasks from "./pages/BrowseTasks";
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -16,5 +16,3 @@ function App() {
     </BrowserRouter>
   );
 }
-
-export default App;

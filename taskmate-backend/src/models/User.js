@@ -2,24 +2,13 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
+    name: String,
+    email: { type: String, unique: true },
+    password: String,
     role: {
       type: String,
       enum: ["client", "volunteer"],
-      required: true,
+      default: "client",
     },
     isBlocked: {
       type: Boolean,

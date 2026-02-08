@@ -1,11 +1,10 @@
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate();
+
   return (
     <>
-      <Navbar />
-
       {/* HERO SECTION */}
       <section className="hero-section">
         <h1>Get help. Give help. Get paid.</h1>
@@ -15,8 +14,19 @@ export default function Home() {
         </p>
 
         <div className="hero-actions">
-          <a href="/register" className="btn">Find a Volunteer</a>
-          <a href="/register" className="btn secondary">Work as Volunteer</a>
+          <button
+            className="btn"
+            onClick={() => navigate("/register")}
+          >
+            Find a Volunteer
+          </button>
+
+          <button
+            className="btn secondary"
+            onClick={() => navigate("/register")}
+          >
+            Work as Volunteer
+          </button>
         </div>
       </section>
 
@@ -37,15 +47,15 @@ export default function Home() {
             <h3>Volunteer Accepts</h3>
             <p>
               Volunteers browse tasks and accept work
-              based on skills and price.
+              based on skills and pricing.
             </p>
           </div>
 
           <div className="info-card">
             <h3>Submit On Time</h3>
             <p>
-              Tasks must be submitted before deadline,
-              otherwise volunteer may get blocked.
+              Tasks must be submitted before the deadline,
+              otherwise the volunteer may get blocked.
             </p>
           </div>
         </div>
@@ -58,13 +68,12 @@ export default function Home() {
         <ul className="feature-list">
           <li>✔ Clear deadlines & accountability</li>
           <li>✔ Fair pricing system</li>
-          <li>✔ Client & volunteer separation</li>
+          <li>✔ Separate dashboards for clients & volunteers</li>
           <li>✔ Auto-blocking for missed deadlines</li>
           <li>✔ Transparent task history</li>
+          <li>✔ Secure login with JWT authentication</li>
         </ul>
       </section>
-
-      <Footer />
     </>
   );
 }

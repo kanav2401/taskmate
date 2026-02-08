@@ -1,7 +1,6 @@
 import { useState } from "react";
-import Navbar from "../components/Navbar";
 import { loginUser } from "../api/api";
-import { setToken } from "../utils/auth";
+import { setToken, setUser } from "../utils/auth";
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -10,66 +9,54 @@ export default function Login() {
   });
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const res = await loginUser(form);
+    const res = await loginUser(form);
 
-      if (res.token) {
-        // ✅ Store JWT in localStorage
-        setToken(res.token);
+    if (res.token) {
+      setToken(res.token);
+      setUser(res.user);
 
-        alert("Login successful");
-
-        // Redirect to home (protected route)
-        window.location.href = "/";
+      if (res.user.role === "client") {
+        window.location.href = "/client-dashboard";
       } else {
-        alert(res.message || "Login failed");
+        window.location.href = "/volunteer-dashboard";
       }
-    } catch (error) {
-      alert("Something went wrong. Please try again.");
-      console.error(error);
+    } else {
+      alert(res.message || "Login failed");
     }
   };
 
   return (
-    <>
-      <Navbar />
+    <div className="auth-container">
+      <h2>Login</h2>
 
-      <div className="auth-box">
-        <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
-
-          <button type="submit" className="btn">
-            Login
-          </button>
-        </form>
-      </div>
-    </>
+        <button type="submit" className="btn">
+          Login
+        </button>
+      </form>
+    </div>
   );
 }

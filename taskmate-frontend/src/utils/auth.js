@@ -1,19 +1,27 @@
-// Save token
+// TOKEN
 export const setToken = (token) => {
   localStorage.setItem("taskmate_token", token);
 };
 
-// Get token
 export const getToken = () => {
   return localStorage.getItem("taskmate_token");
 };
 
-// Remove token (logout)
 export const removeToken = () => {
   localStorage.removeItem("taskmate_token");
+  localStorage.removeItem("taskmate_user");
 };
 
-// Check login
+// USER
+export const setUser = (user) => {
+  localStorage.setItem("taskmate_user", JSON.stringify(user));
+};
+
+export const getUser = () => {
+  const user = localStorage.getItem("taskmate_user");
+  return user ? JSON.parse(user) : null;
+};
+
 export const isLoggedIn = () => {
   return !!getToken();
 };

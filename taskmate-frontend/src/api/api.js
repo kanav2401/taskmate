@@ -1,45 +1,85 @@
 import { getToken } from "../utils/auth";
 
-const API_BASE = "http://localhost:5000/api";
+const API_URL = "http://localhost:5000/api";
 
-// REGISTER
-export const registerUser = async (data) => {
-  const res = await fetch(`${API_BASE}/auth/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+/* =========================
+   AUTH HEADER
+========================= */
+const authHeader = () => ({
+  Authorization: `Bearer ${getToken()}`,
+  "Content-Type": "application/json",
+});
 
-  return res.json();
-};
+/* =========================
+   AUTH APIs
+========================= */
 
-// LOGIN
 export const loginUser = async (data) => {
-  const res = await fetch(`${API_BASE}/auth/login`, {
+  const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-
   return res.json();
 };
 
-// PROTECTED REQUEST (JWT)
-export const protectedRequest = async (url, options = {}) => {
-  const token = getToken();
-
-  const res = await fetch(`${API_BASE}${url}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      ...(options.headers || {}),
-    },
+export const registerUser = async (data) => {
+  const res = await fetch(`${API_URL}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
   });
+  return res.json();
+};
 
+/* =========================
+   CLIENT APIs
+========================= */
+
+export const postTask = async (data) => {
+  const res = await fetch(`${API_URL}/tasks`, {
+    method: "POST",
+    headers: authHeader(),
+    body: JSON.stringify(data),
+  });
+  return res.json();
+};
+
+export const getClientTasks = async () => {
+  const res = await fetch(`${API_URL}/tasks/client`, {
+    headers: authHeader(),
+  });
+  return res.json();
+};
+
+/* =========================
+   VOLUNTEER APIs
+========================= */
+
+export const getTasks = async () => {
+  const res = await fetch(`${API_URL}/tasks`, {
+    headers: authHeader(),
+  });
+  return res.json();
+};
+
+export const acceptTask = async (id) => {
+  const res = await fetch(`${API_URL}/tasks/${id}/accept`, {
+    method: "PUT",
+    headers: authHeader(),
+  });
+  return res.json();
+};
+
+export const getVolunteerTasks = async () => {
+  const res = await fetch(`${API_URL}/tasks/volunteer`, {
+    headers: authHeader(),
+  });
+  return res.json();
+};
+export const getTaskById = async (id) => {
+  const res = await fetch(`${API_URL}/tasks/${id}`, {
+    headers: authHeader(),
+  });
   return res.json();
 };

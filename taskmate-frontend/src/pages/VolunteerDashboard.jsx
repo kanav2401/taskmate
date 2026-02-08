@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getTasks, acceptTask } from "../api/api";
+import { getVolunteerTasks } from "../api/api";
 
-export default function BrowseTasks() {
+export default function VolunteerDashboard() {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
@@ -9,41 +9,36 @@ export default function BrowseTasks() {
   }, []);
 
   const loadTasks = async () => {
-    const data = await getTasks();
+    const data = await getVolunteerTasks();
     setTasks(data);
-  };
-
-  const handleAccept = async (id) => {
-    const res = await acceptTask(id);
-    alert(res.message);
-    loadTasks();
   };
 
   return (
     <div className="dashboard">
-      <h1>Browse Open Tasks</h1>
+      <h1>Volunteer Dashboard</h1>
 
-      {tasks.length === 0 && <p>No open tasks available.</p>}
+      {tasks.length === 0 && <p>You have not accepted any tasks yet.</p>}
 
       <div className="task-list">
         {tasks.map((task) => (
           <div className="task-card" key={task._id}>
-            <h3>{task.title}</h3>
+            <h3>
+  <a href={`/task/${task._id}`}>{task.title}</a>
+</h3>
+
             <p>{task.description}</p>
 
             <p><strong>Client:</strong> {task.client?.name}</p>
             <p><strong>Budget:</strong> ₹{task.budget}</p>
+
             <p>
               <strong>Deadline:</strong>{" "}
               {new Date(task.deadline).toDateString()}
             </p>
 
-            <button
-              className="btn"
-              onClick={() => handleAccept(task._id)}
-            >
-              Accept Task
-            </button>
+            <p>
+              <strong>Status:</strong> {task.status}
+            </p>
           </div>
         ))}
       </div>

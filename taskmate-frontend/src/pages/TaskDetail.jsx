@@ -1,55 +1,44 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { getTaskById } from "../api/api";
 
 export default function TaskDetail() {
   const { id } = useParams();
   const [task, setTask] = useState(null);
-  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchTask = async () => {
-      const res = await getTaskById(id);
-      if (res.message) {
-        setError(res.message);
-      } else {
-        setTask(res);
-      }
-    };
-
+    async function fetchTask() {
+      const data = await getTaskById(id);
+      setTask(data);
+    }
     fetchTask();
   }, [id]);
 
-  if (error) {
-    return <p style={{ padding: "40px" }}>{error}</p>;
-  }
-
-  if (!task) {
-    return <p style={{ padding: "40px" }}>Loading task details...</p>;
-  }
+  if (!task) return <p>Loading task details...</p>;
 
   return (
-    <div style={{ padding: "40px" }}>
+    <div className="page">
       <h2>{task.title}</h2>
       <p>{task.description}</p>
 
       <p><strong>Budget:</strong> ₹{task.budget}</p>
-      <p><strong>Deadline:</strong> {new Date(task.deadline).toDateString()}</p>
       <p><strong>Status:</strong> {task.status}</p>
+      <p><strong>Deadline:</strong> {new Date(task.deadline).toDateString()}</p>
 
-      <hr />
+      {task.status === "accepted" && (
+        <div className="contact-box">
+          <h3>📞 Contact Details</h3>
 
-      <h3>Client</h3>
-      <p>{task.client.name}</p>
-      <p>{task.client.email}</p>
+          <p>
+            <strong>Client:</strong> {task.client.name} <br />
+            📧 {task.client.email}
+          </p>
 
-      {task.volunteer && (
-        <>
-          <hr />
-          <h3>Volunteer</h3>
-          <p>{task.volunteer.name}</p>
-          <p>{task.volunteer.email}</p>
-        </>
+          <p>
+            <strong>Volunteer:</strong> {task.volunteer.name} <br />
+            📧 {task.volunteer.email}
+          </p>
+        </div>
       )}
     </div>
   );

@@ -12,7 +12,7 @@ export default function ClientDashboard() {
 
   const loadTasks = async () => {
     const data = await getClientTasks();
-    setTasks(data);
+    setTasks(data || []);
   };
 
   return (
@@ -28,18 +28,39 @@ export default function ClientDashboard() {
 
         {tasks.map((task) => (
           <div className="task-card" key={task._id}>
-            <h3>
-  <a href={`/task/${task._id}`}>{task.title}</a>
-</h3>
+            <h3>{task.title}</h3>
 
             <p>{task.description}</p>
-            <p><strong>Budget:</strong> ₹{task.budget}</p>
-            <p><strong>Status:</strong> {task.status}</p>
 
-            {task.volunteer && (
-              <p className="accepted">
-                ✅ Accepted by {task.volunteer.name}
-              </p>
+            <p>
+              <strong>Budget:</strong> ₹{task.budget}
+            </p>
+
+            <p>
+              <strong>Status:</strong>{" "}
+              <span className={`status ${task.status}`}>
+                {task.status.toUpperCase()}
+              </span>
+            </p>
+
+            {task.volunteer ? (
+              <>
+                <p className="accepted">
+                  ✅ Accepted by <strong>{task.volunteer.name}</strong>
+                </p>
+                <p>
+                  📧 Contact: <strong>{task.volunteer.email}</strong>
+                </p>
+
+                <button
+                  className="btn secondary"
+                  onClick={() => navigate(`/task/${task._id}`)}
+                >
+                  View Task Details
+                </button>
+              </>
+            ) : (
+              <p className="pending">⏳ Waiting for volunteer</p>
             )}
           </div>
         ))}

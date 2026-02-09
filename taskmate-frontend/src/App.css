@@ -388,3 +388,27 @@ button:disabled {
 .task-card a:hover {
   text-decoration: underline;
 }
+.hero-section {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.info-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  transition: transform 0.2s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-6px);
+}
+
+.contact-box {
+  background: #f1f5ff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+}

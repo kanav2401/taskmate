@@ -1,19 +1,34 @@
 import { useEffect, useState } from "react";
 import { getVolunteerTasks } from "../api/api";
-import { useNavigate } from "react-router-dom";
+import { getUser } from "../utils/auth";
 
 export default function VolunteerDashboard() {
   const [tasks, setTasks] = useState([]);
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
+
+  const user = getUser();
 
   useEffect(() => {
+    if (user?.role !== "volunteer") {
+      setError("Access denied. You are not a volunteer.");
+      return;
+    }
     loadTasks();
   }, []);
 
   const loadTasks = async () => {
     const data = await getVolunteerTasks();
-    setTasks(data || []);
+
+    if (Array.isArray(data)) {
+      setTasks(data);
+    } else {
+      setError(data.message || "Failed to load tasks");
+    }
   };
+
+  if (error) {
+    return <p className="error">{error}</p>;
+  }
 
   return (
     <div className="dashboard">
@@ -26,40 +41,21 @@ export default function VolunteerDashboard() {
       <div className="task-list">
         {tasks.map((task) => (
           <div className="task-card" key={task._id}>
-            <h3>{task.title}</h3>
+            <h3>
+              <a href={`/task/${task._id}`}>{task.title}</a>
+            </h3>
 
             <p>{task.description}</p>
 
-            <p>
-              <strong>Client:</strong> {task.client?.name}
-            </p>
-
-            <p>
-              <strong>Budget:</strong> ₹{task.budget}
-            </p>
+            <p><strong>Client:</strong> {task.client?.name}</p>
+            <p><strong>Budget:</strong> ₹{task.budget}</p>
 
             <p>
               <strong>Deadline:</strong>{" "}
               {new Date(task.deadline).toDateString()}
             </p>
 
-            <p>
-              <strong>Status:</strong>{" "}
-              <span className={`status ${task.status}`}>
-                {task.status.toUpperCase()}
-              </span>
-            </p>
-
-            <p>
-              📧 Contact Client: <strong>{task.client?.email}</strong>
-            </p>
-
-            <button
-              className="btn secondary"
-              onClick={() => navigate(`/task/${task._id}`)}
-            >
-              View Task Details
-            </button>
+            <p><strong>Status:</strong> {task.status}</p>
           </div>
         ))}
       </div>

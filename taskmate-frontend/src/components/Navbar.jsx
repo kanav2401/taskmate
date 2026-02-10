@@ -12,8 +12,8 @@ export default function Navbar() {
       <div className="nav-left">TaskMate</div>
 
       <nav className="nav-links">
-        <Link to="/">Home</Link>
-        <Link to="/browse">Browse Tasks</Link>
+        <Link to="/" className="nav-btn">Home</Link><hr></hr>
+        <Link to="/browse" className="nav-btn">Browse Tasks</Link><hr></hr>
 
         {isLoggedIn() ? (
           <button onClick={logout} className="nav-btn">
@@ -21,7 +21,7 @@ export default function Navbar() {
           </button>
         ) : (
           <>
-            <Link to="/login">Login</Link>
+            <Link to="/login" className="nav-btn">Login</Link><hr></hr>
             <Link to="/register" className="nav-btn">
               Get Started
             </Link>

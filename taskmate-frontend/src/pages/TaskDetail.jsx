@@ -7,38 +7,40 @@ export default function TaskDetail() {
   const [task, setTask] = useState(null);
 
   useEffect(() => {
-    async function fetchTask() {
-      const data = await getTaskById(id);
-      setTask(data);
-    }
-    fetchTask();
-  }, [id]);
+    loadTask();
+  }, []);
 
-  if (!task) return <p>Loading task details...</p>;
+  const loadTask = async () => {
+    const data = await getTaskById(id);
+    setTask(data);
+  };
+
+  if (!task) return <p>Loading task...</p>;
 
   return (
-    <div className="page">
-      <h2>{task.title}</h2>
+    <div className="task-detail">
+      <h1>{task.title}</h1>
+
       <p>{task.description}</p>
 
       <p><strong>Budget:</strong> ₹{task.budget}</p>
       <p><strong>Status:</strong> {task.status}</p>
-      <p><strong>Deadline:</strong> {new Date(task.deadline).toDateString()}</p>
 
-      {task.status === "accepted" && (
-        <div className="contact-box">
-          <h3>📞 Contact Details</h3>
+      <hr />
 
-          <p>
-            <strong>Client:</strong> {task.client.name} <br />
-            📧 {task.client.email}
-          </p>
+      <h3>Client Info</h3>
+      <p><strong>Name:</strong> {task.client.name}</p>
+      <p><strong>Email:</strong> {task.client.email}</p>
 
-          <p>
-            <strong>Volunteer:</strong> {task.volunteer.name} <br />
-            📧 {task.volunteer.email}
-          </p>
-        </div>
+      {task.volunteer ? (
+        <>
+          <hr />
+          <h3>Volunteer Info</h3>
+          <p><strong>Name:</strong> {task.volunteer.name}</p>
+          <p><strong>Email:</strong> {task.volunteer.email}</p>
+        </>
+      ) : (
+        <p>No volunteer assigned yet.</p>
       )}
     </div>
   );

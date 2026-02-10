@@ -468,3 +468,19 @@ button:disabled {
 .app-content {
   flex: 1;
 }
+.page {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.page h1 {
+  margin-bottom: 20px;
+}
+
+.page p, .page li {
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+

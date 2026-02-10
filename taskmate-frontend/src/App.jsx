@@ -8,6 +8,10 @@ import PostTask from "./pages/PostTask";
 import ClientDashboard from "./pages/ClientDashboard";
 import VolunteerDashboard from "./pages/VolunteerDashboard";
 import TaskDetail from "./pages/TaskDetail";
+import FAQ from "./pages/FAQ";
+import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -33,6 +37,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
 
           <Route
             path="/browse"

@@ -7,10 +7,26 @@ const userSchema = new mongoose.Schema(
     password: String,
     role: {
       type: String,
-      enum: ["client", "volunteer"],
+      enum: ["client", "volunteer", "admin"],
       default: "client",
     },
+
     isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+
+    blockCount: {
+      type: Number,
+      default: 0,
+    },
+
+    isPermanentlyBlocked: {
+      type: Boolean,
+      default: false,
+    },
+
+    unblockRequested: {
       type: Boolean,
       default: false,
     },

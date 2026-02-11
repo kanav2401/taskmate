@@ -2,9 +2,6 @@ import { getToken } from "../utils/auth";
 
 const API_URL = "http://localhost:5000/api";
 
-/* =========================
-   AUTH HEADER
-========================= */
 const authHeader = () => ({
   Authorization: `Bearer ${getToken()}`,
   "Content-Type": "application/json",
@@ -77,8 +74,41 @@ export const getVolunteerTasks = async () => {
   });
   return res.json();
 };
+
+/* =========================
+   TASK DETAIL
+========================= */
+
 export const getTaskById = async (id) => {
   const res = await fetch(`${API_URL}/tasks/${id}`, {
+    headers: authHeader(),
+  });
+  return res.json();
+};
+
+/* =========================
+   SUBMISSION FLOW
+========================= */
+
+export const submitTask = async (id, note) => {
+  const res = await fetch(`${API_URL}/tasks/${id}/submit`, {
+    method: "PUT",
+    headers: authHeader(),
+    body: JSON.stringify({ note }),
+  });
+  return res.json();
+};
+
+export const completeTask = async (id) => {
+  const res = await fetch(`${API_URL}/tasks/${id}/complete`, {
+    method: "PUT",
+    headers: authHeader(),
+  });
+  return res.json();
+};
+export const requestUnblock = async () => {
+  const res = await fetch(`${API_URL}/tasks/request-unblock`, {
+    method: "PUT",
     headers: authHeader(),
   });
   return res.json();

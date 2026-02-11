@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getClientTasks } from "../api/api";
+import { getClientTasks, completeTask } from "../api/api";
 import { useNavigate } from "react-router-dom";
 
 export default function ClientDashboard() {
@@ -12,7 +12,20 @@ export default function ClientDashboard() {
 
   const loadTasks = async () => {
     const data = await getClientTasks();
-    setTasks(data || []);
+    if (Array.isArray(data)) {
+      setTasks(data);
+    } else {
+      setTasks([]);
+    }
+  };
+
+  const handleComplete = async (id) => {
+    await completeTask(id);
+    loadTasks();
+  };
+
+  const getStatusBadge = (status) => {
+    return <span className={`badge badge-${status}`}>{status}</span>;
   };
 
   return (
@@ -29,38 +42,24 @@ export default function ClientDashboard() {
         {tasks.map((task) => (
           <div className="task-card" key={task._id}>
             <h3>{task.title}</h3>
-
             <p>{task.description}</p>
+            <p><strong>Budget:</strong> ₹{task.budget}</p>
 
-            <p>
-              <strong>Budget:</strong> ₹{task.budget}
-            </p>
+            {getStatusBadge(task.status)}
 
-            <p>
-              <strong>Status:</strong>{" "}
-              <span className={`status ${task.status}`}>
-                {task.status.toUpperCase()}
-              </span>
-            </p>
+            {task.status === "submitted" && (
+              <button
+                className="btn complete-btn"
+                onClick={() => handleComplete(task._id)}
+              >
+                Mark as Completed
+              </button>
+            )}
 
-            {task.volunteer ? (
-              <>
-                <p className="accepted">
-                  ✅ Accepted by <strong>{task.volunteer.name}</strong>
-                </p>
-                <p>
-                  📧 Contact: <strong>{task.volunteer.email}</strong>
-                </p>
-
-                <button
-                  className="btn secondary"
-                  onClick={() => navigate(`/task/${task._id}`)}
-                >
-                  View Task Details
-                </button>
-              </>
-            ) : (
-              <p className="pending">⏳ Waiting for volunteer</p>
+            {task.volunteer && (
+              <p className="accepted">
+                Accepted by {task.volunteer.name}
+              </p>
             )}
           </div>
         ))}

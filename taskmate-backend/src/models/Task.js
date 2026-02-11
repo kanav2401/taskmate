@@ -20,7 +20,7 @@ const taskSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["open", "accepted", "completed", "overdue"],
+      enum: ["open", "accepted", "submitted", "completed", "overdue"],
       default: "open",
     },
     client: {
@@ -36,6 +36,14 @@ const taskSchema = new mongoose.Schema(
     acceptedAt: {
       type: Date,
       default: null,
+    },
+    submittedAt: {
+      type: Date,
+      default: null,
+    },
+    submissionNote: {
+      type: String,
+      default: "",
     },
   },
   { timestamps: true }

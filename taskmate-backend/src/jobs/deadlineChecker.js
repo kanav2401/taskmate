@@ -1,31 +1,45 @@
-import cron from "node-cron";
 import Task from "../models/Task.js";
 import User from "../models/User.js";
 
-const deadlineChecker = () => {
-  cron.schedule("* * * * *", async () => {
-    const now = new Date();
+const deadlineChecker = async () => {
+  setInterval(async () => {
+    try {
+      const now = new Date();
 
-    const overdueTasks = await Task.find({
-      status: "accepted",
-      deadline: { $lt: now },
-    });
+      const expiredTasks = await Task.find({
+        status: "accepted",
+        deadline: { $lt: now },
+      });
 
-    for (const task of overdueTasks) {
-      task.status = "overdue";
-      await task.save();
+      for (const task of expiredTasks) {
+        // Mark task overdue
+        task.status = "overdue";
+        await task.save();
 
-      if (task.volunteer) {
-        await User.findByIdAndUpdate(task.volunteer, {
-          isBlocked: true,
-        });
+        // Get volunteer
+        const volunteer = await User.findById(task.volunteer);
+
+        if (!volunteer) continue;
+
+        // Increase strike count
+        volunteer.blockCount += 1;
+        volunteer.isBlocked = true;
+
+        // Permanent ban after 3 strikes
+        if (volunteer.blockCount >= 3) {
+          volunteer.isPermanentlyBlocked = true;
+        }
+
+        await volunteer.save();
+
+        console.log(
+          `Volunteer ${volunteer.email} blocked. Strike: ${volunteer.blockCount}`
+        );
       }
+    } catch (error) {
+      console.log("Deadline checker error:", error.message);
     }
-
-    if (overdueTasks.length > 0) {
-      console.log(`⛔ ${overdueTasks.length} overdue task(s) processed`);
-    }
-  });
+  }, 60000); // runs every 1 minute
 };
 
 export default deadlineChecker;

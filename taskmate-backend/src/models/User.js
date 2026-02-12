@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema(
     name: String,
     email: { type: String, unique: true },
     password: String,
+
     role: {
       type: String,
       enum: ["client", "volunteer", "admin"],
@@ -16,19 +17,14 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    blockCount: {
-      type: Number,
-      default: 0,
-    },
-
     isPermanentlyBlocked: {
       type: Boolean,
       default: false,
     },
 
-    unblockRequested: {
-      type: Boolean,
-      default: false,
+    blockCount: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }

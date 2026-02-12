@@ -113,3 +113,35 @@ export const requestUnblock = async () => {
   });
   return res.json();
 };
+/* =========================
+   ADMIN APIs
+========================= */
+
+export const getAdminStats = async () => {
+  const res = await fetch(`${API_URL}/admin/stats`, {
+    headers: authHeader(),
+  });
+  return res.json();
+};
+
+export const getAllUsers = async () => {
+  const res = await fetch(`${API_URL}/admin/users`, {
+    headers: authHeader(),
+  });
+  return res.json();
+};
+
+export const unblockUser = async (id) => {
+  const res = await fetch(`${API_URL}/admin/unblock/${id}`, {
+    method: "PUT",
+    headers: authHeader(),
+  });
+  return res.json();
+};
+
+export const getAllTasksAdmin = async () => {
+  const res = await fetch(`${API_URL}/admin/tasks`, {
+    headers: authHeader(),
+  });
+  return res.json();
+};

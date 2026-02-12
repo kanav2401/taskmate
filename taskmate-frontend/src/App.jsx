@@ -17,6 +17,9 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BlockedBanner from "./components/BlockedBanner";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminRoute from "./components/AdminRoute";
+
 
 import { getUser } from "./utils/auth";
 
@@ -86,6 +89,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+  path="/admin-dashboard"
+  element={
+    <AdminRoute>
+      <AdminDashboard />
+    </AdminRoute>
+  }
+/>
+
         </Routes>
       </main>
 

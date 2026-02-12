@@ -21,6 +21,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+averageRating: {
+  type: Number,
+  default: 0,
+},
+totalRatings: {
+  type: Number,
+  default: 0,
+},
 
     blockCount: {
       type: Number,

@@ -145,3 +145,11 @@ export const getAllTasksAdmin = async () => {
   });
   return res.json();
 };
+export const rateTask = async (id, rating, review) => {
+  const res = await fetch(`${API_URL}/tasks/${id}/rate`, {
+    method: "PUT",
+    headers: authHeader(),
+    body: JSON.stringify({ rating, review }),
+  });
+  return res.json();
+};

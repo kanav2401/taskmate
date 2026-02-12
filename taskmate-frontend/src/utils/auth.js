@@ -1,4 +1,5 @@
-// TOKEN
+// ================= TOKEN =================
+
 export const setToken = (token) => {
   localStorage.setItem("taskmate_token", token);
 };
@@ -12,7 +13,8 @@ export const removeToken = () => {
   localStorage.removeItem("taskmate_user");
 };
 
-// USER
+// ================= USER =================
+
 export const setUser = (user) => {
   localStorage.setItem("taskmate_user", JSON.stringify(user));
 };

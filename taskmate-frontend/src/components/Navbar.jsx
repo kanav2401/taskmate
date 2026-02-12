@@ -1,33 +1,57 @@
-import { Link } from "react-router-dom";
-import { isLoggedIn, removeToken } from "../utils/auth";
+import { Link, useNavigate } from "react-router-dom";
+import { isLoggedIn, removeToken, getUser } from "../utils/auth";
 
 export default function Navbar() {
-  const logout = () => {
-    removeToken();
-    window.location.href = "/";
+  const navigate = useNavigate();
+  const user = getUser();
+
+  const handleLogout = () => {
+    removeToken(); // ✅ correct function
+    navigate("/");
+    window.location.reload(); // optional but keeps UI fresh
   };
 
   return (
-    <header className="navbar">
-      <div className="nav-left">TaskMate</div>
+    <nav className="navbar">
+      <div className="logo">
+        <Link to="/">TaskMate</Link>
+      </div>
 
-      <nav className="nav-links">
-        <Link to="/" className="nav-btn">Home</Link><hr></hr>
-        <Link to="/browse" className="nav-btn">Browse Tasks</Link><hr></hr>
+      <div className="nav-links">
+        <Link to="/">Home</Link>
 
-        {isLoggedIn() ? (
-          <button onClick={logout} className="nav-btn">
-            Logout
-          </button>
-        ) : (
+        {isLoggedIn() && user?.role === "volunteer" && (
+          <Link to="/browse">Browse Tasks</Link>
+        )}
+
+        {isLoggedIn() && user?.role === "client" && (
+          <Link to="/client-dashboard">Dashboard</Link>
+        )}
+
+        {isLoggedIn() && user?.role === "volunteer" && (
+          <Link to="/volunteer-dashboard">Dashboard</Link>
+        )}
+
+        {/* ✅ ADMIN ICON — visible only to admin */}
+        {user?.role === "admin" && (
+          <Link to="/admin" className="admin-link">
+            🛠 Admin
+          </Link>
+        )}
+
+        {!isLoggedIn() ? (
           <>
-            <Link to="/login" className="nav-btn">Login</Link><hr></hr>
-            <Link to="/register" className="nav-btn">
+            <Link to="/login">Login</Link>
+            <Link to="/register" className="btn-nav">
               Get Started
             </Link>
           </>
+        ) : (
+          <button className="btn-nav" onClick={handleLogout}>
+            Logout
+          </button>
         )}
-      </nav>
-    </header>
+      </div>
+    </nav>
   );
 }

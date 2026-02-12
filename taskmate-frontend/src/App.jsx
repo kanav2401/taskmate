@@ -21,6 +21,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminRoute from "./components/AdminRoute";
 
 
+
+
 import { getUser } from "./utils/auth";
 
 function App() {
@@ -95,6 +97,14 @@ function App() {
     <AdminRoute>
       <AdminDashboard />
     </AdminRoute>
+  }
+/>
+<Route
+  path="/admin"
+  element={
+    <ProtectedRoute>
+      <AdminDashboard />
+    </ProtectedRoute>
   }
 />
 

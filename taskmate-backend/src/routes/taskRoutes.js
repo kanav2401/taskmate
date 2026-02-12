@@ -12,6 +12,8 @@ import {
   unblockUser,
 } from "../controllers/taskController.js";
 import { requestUnblock, adminUnblockUser } from "../controllers/taskController.js";
+import { rateTask } from "../controllers/taskController.js";
+
 
 const router = express.Router();
 
@@ -25,6 +27,7 @@ router.get("/", authMiddleware, getOpenTasks);
 router.put("/:id/accept", authMiddleware, acceptTask);
 router.put("/:id/submit", authMiddleware, submitTask);
 router.get("/volunteer", authMiddleware, getVolunteerTasks);
+router.put("/:id/rate", authMiddleware, rateTask);
 
 /* TASK DETAIL */
 router.get("/:id", authMiddleware, getTaskById);

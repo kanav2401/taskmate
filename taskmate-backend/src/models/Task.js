@@ -45,8 +45,21 @@ const taskSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    rating: {
+  type: Number,
+  min: 1,
+  max: 5,
+  default: null,
+},
+review: {
+  type: String,
+  default: "",
+},
+
   },
   { timestamps: true }
+  
 );
+
 
 export default mongoose.model("Task", taskSchema);

@@ -268,3 +268,47 @@ export const adminUnblockUser = async (req, res) => {
     res.status(500).json({ message: "Unblock failed" });
   }
 };
+// CLIENT: RATE VOLUNTEER
+export const rateTask = async (req, res) => {
+  if (req.user.role !== "client") {
+    return res.status(403).json({ message: "Only clients can rate" });
+  }
+
+  try {
+    const task = await Task.findById(req.params.id);
+
+    if (!task || task.status !== "completed") {
+      return res.status(400).json({ message: "Task not completed yet" });
+    }
+
+    if (task.client.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Not your task" });
+    }
+
+    if (task.rating) {
+      return res.status(400).json({ message: "Already rated" });
+    }
+
+    const { rating, review } = req.body;
+
+    task.rating = rating;
+    task.review = review || "";
+    await task.save();
+
+    // Update volunteer average rating
+    const volunteer = await User.findById(task.volunteer);
+
+    const totalScore =
+      volunteer.averageRating * volunteer.totalRatings + rating;
+
+    volunteer.totalRatings += 1;
+    volunteer.averageRating =
+      totalScore / volunteer.totalRatings;
+
+    await volunteer.save();
+
+    res.json({ message: "Rating submitted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Rating failed" });
+  }
+};

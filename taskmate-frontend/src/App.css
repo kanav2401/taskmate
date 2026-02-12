@@ -728,5 +728,14 @@ button:disabled {
   background: #dcfce7;
   color: #166534;
 }
+.admin-link {
+  color: #ffcc00;
+  font-weight: 600;
+  margin-left: 15px;
+}
+
+.admin-link:hover {
+  color: #ffd633;
+}
 
 

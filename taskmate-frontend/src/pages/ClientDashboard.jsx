@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { getClientTasks, completeTask } from "../api/api";
 import { useNavigate } from "react-router-dom";
+import { rateTask } from "../api/api";
+
 
 export default function ClientDashboard() {
   const [tasks, setTasks] = useState([]);
@@ -55,7 +57,7 @@ export default function ClientDashboard() {
                 Mark as Completed
               </button>
             )}
-
+  
             {task.volunteer && (
               <p className="accepted">
                 Accepted by {task.volunteer.name}

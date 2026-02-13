@@ -5,6 +5,7 @@ import { getTaskById } from "../api/api";
 export default function TaskDetail() {
   const { id } = useParams();
   const [task, setTask] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     loadTask();
@@ -12,9 +13,15 @@ export default function TaskDetail() {
 
   const loadTask = async () => {
     const data = await getTaskById(id);
-    setTask(data);
+
+    if (data.message) {
+      setError(data.message);
+    } else {
+      setTask(data);
+    }
   };
 
+  if (error) return <p className="error">{error}</p>;
   if (!task) return <p>Loading task...</p>;
 
   return (
@@ -29,18 +36,16 @@ export default function TaskDetail() {
       <hr />
 
       <h3>Client Info</h3>
-      <p><strong>Name:</strong> {task.client.name}</p>
-      <p><strong>Email:</strong> {task.client.email}</p>
+      <p><strong>Name:</strong> {task.client?.name}</p>
+      <p><strong>Email:</strong> {task.client?.email}</p>
 
-      {task.volunteer ? (
+      {task.volunteer && (
         <>
           <hr />
           <h3>Volunteer Info</h3>
-          <p><strong>Name:</strong> {task.volunteer.name}</p>
-          <p><strong>Email:</strong> {task.volunteer.email}</p>
+          <p><strong>Name:</strong> {task.volunteer?.name}</p>
+          <p><strong>Email:</strong> {task.volunteer?.email}</p>
         </>
-      ) : (
-        <p>No volunteer assigned yet.</p>
       )}
     </div>
   );

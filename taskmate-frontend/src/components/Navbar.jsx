@@ -6,9 +6,9 @@ export default function Navbar() {
   const user = getUser();
 
   const handleLogout = () => {
-    removeToken(); // ✅ correct function
+    removeToken(); // removes token + user
     navigate("/");
-    window.location.reload(); // optional but keeps UI fresh
+    window.location.reload(); // refresh UI state
   };
 
   return (
@@ -20,25 +20,27 @@ export default function Navbar() {
       <div className="nav-links">
         <Link to="/">Home</Link>
 
+        {/* Volunteer */}
         {isLoggedIn() && user?.role === "volunteer" && (
-          <Link to="/browse">Browse Tasks</Link>
+          <>
+            <Link to="/browse">Browse Tasks</Link>
+            <Link to="/volunteer-dashboard">Dashboard</Link>
+          </>
         )}
 
+        {/* Client */}
         {isLoggedIn() && user?.role === "client" && (
           <Link to="/client-dashboard">Dashboard</Link>
         )}
 
-        {isLoggedIn() && user?.role === "volunteer" && (
-          <Link to="/volunteer-dashboard">Dashboard</Link>
-        )}
-
-        {/* ✅ ADMIN ICON — visible only to admin */}
-        {user?.role === "admin" && (
-          <Link to="/admin" className="admin-link">
+        {/* Admin */}
+        {isLoggedIn() && user?.role === "admin" && (
+          <Link to="/admin-dashboard" className="admin-link">
             🛠 Admin
           </Link>
         )}
 
+        {/* Auth Buttons */}
         {!isLoggedIn() ? (
           <>
             <Link to="/login">Login</Link>

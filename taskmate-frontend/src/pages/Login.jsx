@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/api";
-import { setToken, setUser } from "../utils/auth";
+import { setUser } from "../utils/auth";
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -8,8 +9,13 @@ export default function Login() {
     password: "",
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -17,26 +23,32 @@ export default function Login() {
 
     const res = await loginUser(form);
 
-    if (res.token) {
-      setToken(res.token);
+    if (res.user) {
+      // ✅ Save only user (NO TOKEN)
       setUser(res.user);
 
-      if (res.user.role === "client") {
-        window.location.href = "/client-dashboard";
+      // Redirect based on role
+      if (res.user.role === "admin") {
+        navigate("/admin");
+      } else if (res.user.role === "client") {
+        navigate("/client-dashboard");
       } else {
-        window.location.href = "/volunteer-dashboard";
+        navigate("/volunteer-dashboard");
       }
+
+      window.location.reload();
     } else {
       alert(res.message || "Login failed");
     }
   };
 
   return (
-    <div className="auth-container">
-      <h2>Login</h2>
+    <div className="auth-page">
+      <h1>Login</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="auth-form">
         <input
+          type="email"
           name="email"
           placeholder="Email"
           value={form.email}
@@ -45,8 +57,8 @@ export default function Login() {
         />
 
         <input
-          name="password"
           type="password"
+          name="password"
           placeholder="Password"
           value={form.password}
           onChange={handleChange}

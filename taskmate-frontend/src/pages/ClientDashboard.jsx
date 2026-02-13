@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { getClientTasks, completeTask } from "../api/api";
-import { useNavigate } from "react-router-dom";
-import { rateTask } from "../api/api";
-
+import { useNavigate, Link } from "react-router-dom";
 
 export default function ClientDashboard() {
   const [tasks, setTasks] = useState([]);
@@ -22,7 +20,8 @@ export default function ClientDashboard() {
   };
 
   const handleComplete = async (id) => {
-    await completeTask(id);
+    const res = await completeTask(id);
+    alert(res.message);
     loadTasks();
   };
 
@@ -43,7 +42,14 @@ export default function ClientDashboard() {
 
         {tasks.map((task) => (
           <div className="task-card" key={task._id}>
-            <h3>{task.title}</h3>
+
+            {/* ✅ CLICKABLE TITLE */}
+            <h3>
+              <Link to={`/task/${task._id}`} className="task-link">
+                {task.title}
+              </Link>
+            </h3>
+
             <p>{task.description}</p>
             <p><strong>Budget:</strong> ₹{task.budget}</p>
 
@@ -57,7 +63,7 @@ export default function ClientDashboard() {
                 Mark as Completed
               </button>
             )}
-  
+
             {task.volunteer && (
               <p className="accepted">
                 Accepted by {task.volunteer.name}

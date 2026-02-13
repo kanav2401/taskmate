@@ -1,11 +1,4 @@
-import { getToken } from "../utils/auth";
-
 const API_URL = "http://localhost:5000/api";
-
-const authHeader = () => ({
-  Authorization: `Bearer ${getToken()}`,
-  "Content-Type": "application/json",
-});
 
 /* =========================
    AUTH APIs
@@ -14,6 +7,7 @@ const authHeader = () => ({
 export const loginUser = async (data) => {
   const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
@@ -23,10 +17,18 @@ export const loginUser = async (data) => {
 export const registerUser = async (data) => {
   const res = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   return res.json();
+};
+
+export const logoutUser = async () => {
+  await fetch(`${API_URL}/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
 };
 
 /* =========================
@@ -36,7 +38,8 @@ export const registerUser = async (data) => {
 export const postTask = async (data) => {
   const res = await fetch(`${API_URL}/tasks`, {
     method: "POST",
-    headers: authHeader(),
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   return res.json();
@@ -44,7 +47,15 @@ export const postTask = async (data) => {
 
 export const getClientTasks = async () => {
   const res = await fetch(`${API_URL}/tasks/client`, {
-    headers: authHeader(),
+    credentials: "include",
+  });
+  return res.json();
+};
+
+export const completeTask = async (id) => {
+  const res = await fetch(`${API_URL}/tasks/${id}/complete`, {
+    method: "PUT",
+    credentials: "include",
   });
   return res.json();
 };
@@ -53,9 +64,9 @@ export const getClientTasks = async () => {
    VOLUNTEER APIs
 ========================= */
 
-export const getTasks = async () => {
+export const getOpenTasks = async () => {
   const res = await fetch(`${API_URL}/tasks`, {
-    headers: authHeader(),
+    credentials: "include",
   });
   return res.json();
 };
@@ -63,14 +74,32 @@ export const getTasks = async () => {
 export const acceptTask = async (id) => {
   const res = await fetch(`${API_URL}/tasks/${id}/accept`, {
     method: "PUT",
-    headers: authHeader(),
+    credentials: "include",
   });
   return res.json();
 };
 
 export const getVolunteerTasks = async () => {
   const res = await fetch(`${API_URL}/tasks/volunteer`, {
-    headers: authHeader(),
+    credentials: "include",
+  });
+  return res.json();
+};
+
+export const submitTask = async (id, note) => {
+  const res = await fetch(`${API_URL}/tasks/${id}/submit`, {
+    method: "PUT",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ note }),
+  });
+  return res.json();
+};
+
+export const requestUnblock = async () => {
+  const res = await fetch(`${API_URL}/tasks/request-unblock`, {
+    method: "PUT",
+    credentials: "include",
   });
   return res.json();
 };
@@ -81,52 +110,32 @@ export const getVolunteerTasks = async () => {
 
 export const getTaskById = async (id) => {
   const res = await fetch(`${API_URL}/tasks/${id}`, {
-    headers: authHeader(),
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    cache: "no-store", // 🔥 prevents 304 caching
   });
+
   return res.json();
 };
 
-/* =========================
-   SUBMISSION FLOW
-========================= */
 
-export const submitTask = async (id, note) => {
-  const res = await fetch(`${API_URL}/tasks/${id}/submit`, {
-    method: "PUT",
-    headers: authHeader(),
-    body: JSON.stringify({ note }),
-  });
-  return res.json();
-};
-
-export const completeTask = async (id) => {
-  const res = await fetch(`${API_URL}/tasks/${id}/complete`, {
-    method: "PUT",
-    headers: authHeader(),
-  });
-  return res.json();
-};
-export const requestUnblock = async () => {
-  const res = await fetch(`${API_URL}/tasks/request-unblock`, {
-    method: "PUT",
-    headers: authHeader(),
-  });
-  return res.json();
-};
 /* =========================
    ADMIN APIs
 ========================= */
 
 export const getAdminStats = async () => {
   const res = await fetch(`${API_URL}/admin/stats`, {
-    headers: authHeader(),
+    credentials: "include",
   });
   return res.json();
 };
 
 export const getAllUsers = async () => {
   const res = await fetch(`${API_URL}/admin/users`, {
-    headers: authHeader(),
+    credentials: "include",
   });
   return res.json();
 };
@@ -134,21 +143,23 @@ export const getAllUsers = async () => {
 export const unblockUser = async (id) => {
   const res = await fetch(`${API_URL}/admin/unblock/${id}`, {
     method: "PUT",
-    headers: authHeader(),
+    credentials: "include",
   });
   return res.json();
 };
 
 export const getAllTasksAdmin = async () => {
   const res = await fetch(`${API_URL}/admin/tasks`, {
-    headers: authHeader(),
+    credentials: "include",
   });
   return res.json();
 };
+
 export const rateTask = async (id, rating, review) => {
   const res = await fetch(`${API_URL}/tasks/${id}/rate`, {
     method: "PUT",
-    headers: authHeader(),
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ rating, review }),
   });
   return res.json();

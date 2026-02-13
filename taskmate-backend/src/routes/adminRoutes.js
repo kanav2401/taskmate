@@ -10,12 +10,33 @@ import {
 
 const router = express.Router();
 
-router.use(authMiddleware, adminMiddleware);
+/*
+=====================================
+   🔐 ALL ADMIN ROUTES PROTECTED
+=====================================
+   1. Must be logged in
+   2. Must be admin
+=====================================
+*/
+router.use(authMiddleware);
+router.use(adminMiddleware);
 
-router.get("/users", getAllUsers);
-router.put("/unblock/:id", unblockUser);
-router.get("/tasks", getAllTasks);
+/*
+=====================================
+   📊 ADMIN DASHBOARD DATA
+=====================================
+*/
+
+// Get admin stats (users, tasks, blocked count)
 router.get("/stats", getAdminStats);
 
-export default router;
+// Get all users
+router.get("/users", getAllUsers);
 
+// Unblock user
+router.put("/unblock/:id", unblockUser);
+
+// Get all tasks (full system overview)
+router.get("/tasks", getAllTasks);
+
+export default router;

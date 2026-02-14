@@ -115,11 +115,14 @@ export const getTaskById = async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    const isClient = task.client._id.toString() === req.user.id;
+    const isClient = task.client._id.toString() === req.user._id.toString();
     const isVolunteer =
-      task.volunteer && task.volunteer._id.toString() === req.user.id;
+      task.volunteer &&
+      task.volunteer._id.toString() === req.user._id.toString();
 
-    if (!isClient && !isVolunteer) {
+    const isAdmin = req.user.role === "admin";
+
+    if (!isClient && !isVolunteer && !isAdmin) {
       return res.status(403).json({ message: "Access denied" });
     }
 
@@ -128,6 +131,7 @@ export const getTaskById = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch task" });
   }
 };
+
 
 /* ================= SUBMISSION FLOW ================= */
 

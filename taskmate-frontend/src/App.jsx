@@ -19,6 +19,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import BlockedBanner from "./components/BlockedBanner";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminRoute from "./components/AdminRoute";
+import Layout from "./components/Layout";
 
 
 
@@ -107,6 +108,8 @@ function App() {
     </ProtectedRoute>
   }
 />
+
+
 
         </Routes>
       </main>

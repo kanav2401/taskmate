@@ -6,6 +6,24 @@ import {
   getAllTasksAdmin,
 } from "../api/api";
 
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+
+const COLORS = ["#2563eb", "#16a34a", "#f59e0b", "#ef4444"];
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState({});
   const [users, setUsers] = useState([]);
@@ -30,20 +48,49 @@ export default function AdminDashboard() {
     loadData();
   };
 
+  /* ================= Analytics Data ================= */
+
+  // Group tasks by day
+  const tasksPerDay = Object.values(
+    tasks.reduce((acc, task) => {
+      const date = new Date(task.createdAt).toLocaleDateString();
+      if (!acc[date]) acc[date] = { date, count: 0 };
+      acc[date].count += 1;
+      return acc;
+    }, {})
+  );
+
+  // Growth trend (cumulative)
+  let cumulative = 0;
+  const growthTrend = tasksPerDay.map((item) => {
+    cumulative += item.count;
+    return { ...item, total: cumulative };
+  });
+
+  // Status distribution
+  const statusData = Object.values(
+    tasks.reduce((acc, task) => {
+      const status = task.status;
+      if (!acc[status]) acc[status] = { name: status, value: 0 };
+      acc[status].value += 1;
+      return acc;
+    }, {})
+  );
+
   return (
     <div className="admin-container">
-      <h1 className="admin-title">Admin Dashboard</h1>
+      <h1 className="admin-title">Admin Analytics Dashboard 📊</h1>
 
-      {/* STATS */}
+      {/* ================= STATS ================= */}
       <div className="admin-stats">
         <div className="stat-box">
           <h3>Total Users</h3>
-          <p>{stats.totalUsers || 0}</p>
+          <p>{stats.totalUsers || users.length}</p>
         </div>
 
         <div className="stat-box">
           <h3>Total Tasks</h3>
-          <p>{stats.totalTasks || 0}</p>
+          <p>{stats.totalTasks || tasks.length}</p>
         </div>
 
         <div className="stat-box">
@@ -52,7 +99,65 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* USERS TABLE */}
+      {/* ================= CHARTS ================= */}
+      <div className="charts-grid">
+
+        {/* 📊 Bar Chart */}
+        <div className="chart-card">
+          <h2>Tasks Per Day</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={tasksPerDay}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="count" fill="#2563eb" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* 📈 Line Chart */}
+        <div className="chart-card">
+          <h2>Growth Trend</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={growthTrend}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="total" stroke="#16a34a" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* 🥧 Pie Chart */}
+        <div className="chart-card">
+          <h2>Task Status Distribution</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={statusData}
+                dataKey="value"
+                nameKey="name"
+                outerRadius={100}
+                label
+              >
+                {statusData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+      </div>
+
+      {/* ================= USERS TABLE ================= */}
       <h2>All Users</h2>
       <div className="table-wrapper">
         <table className="admin-table">
@@ -75,54 +180,23 @@ export default function AdminDashboard() {
                   <span
                     className={
                       user.isBlocked
-                        ? "badge badge-blocked"
-                        : "badge badge-active"
+                        ? "badge badge-overdue"
+                        : "badge badge-completed"
                     }
                   >
                     {user.isBlocked ? "Blocked" : "Active"}
                   </span>
                 </td>
                 <td>
-                  {user.isBlocked &&
-                    !user.isPermanentlyBlocked &&
-                    user.blockCount < 3 && (
-                      <button
-                        className="btn-small"
-                        onClick={() => handleUnblock(user._id)}
-                      >
-                        Unblock
-                      </button>
-                    )}
+                  {user.isBlocked && (
+                    <button
+                      className="btn-small"
+                      onClick={() => handleUnblock(user._id)}
+                    >
+                      Unblock
+                    </button>
+                  )}
                 </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* TASKS TABLE */}
-      <h2>All Tasks</h2>
-      <div className="table-wrapper">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Status</th>
-              <th>Client</th>
-              <th>Volunteer</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasks.map((task) => (
-              <tr key={task._id}>
-                <td>{task.title}</td>
-                <td>
-                  <span className={`badge badge-${task.status}`}>
-                    {task.status}
-                  </span>
-                </td>
-                <td>{task.client?.name}</td>
-                <td>{task.volunteer?.name || "—"}</td>
               </tr>
             ))}
           </tbody>

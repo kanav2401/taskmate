@@ -1,14 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
 import { isLoggedIn, removeUser, getUser } from "../utils/auth";
-import { logoutUser } from "../api/api";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const user = getUser();
 
   const handleLogout = async () => {
-    await logoutUser();   // clears cookies from backend
-    removeUser();         // clears localStorage user
+    await fetch("http://localhost:5000/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    removeUser();
     navigate("/");
     window.location.reload();
   };
@@ -22,6 +25,7 @@ export default function Navbar() {
       <div className="nav-links">
         <Link to="/">Home</Link>
 
+        {/* VOLUNTEER LINKS */}
         {isLoggedIn() && user?.role === "volunteer" && (
           <>
             <Link to="/browse">Browse Tasks</Link>
@@ -29,16 +33,19 @@ export default function Navbar() {
           </>
         )}
 
+        {/* CLIENT LINKS */}
         {isLoggedIn() && user?.role === "client" && (
           <Link to="/client-dashboard">Dashboard</Link>
         )}
 
-        {user?.role === "admin" && (
-          <Link to="/admin-dashboard" className="admin-link">
+        {/* ADMIN LINK */}
+        {isLoggedIn() && user?.role === "admin" && (
+          <Link to="/admin" className="admin-link">
             🛠 Admin
           </Link>
         )}
 
+        {/* LOGIN / LOGOUT */}
         {!isLoggedIn() ? (
           <>
             <Link to="/login">Login</Link>

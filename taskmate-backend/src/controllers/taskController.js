@@ -115,14 +115,24 @@ export const getTaskById = async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    const isClient = task.client._id.toString() === req.user._id.toString();
-    const isVolunteer =
-      task.volunteer &&
-      task.volunteer._id.toString() === req.user._id.toString();
+    const userId = req.user.id;
+    const role = req.user.role;
 
-    const isAdmin = req.user.role === "admin";
+    const isClient = task.client.id === userId;
+    const isAssignedVolunteer =
+      task.volunteer && task.volunteer.id === userId;
 
-    if (!isClient && !isVolunteer && !isAdmin) {
+    const isAdmin = role === "admin";
+
+    const isOpenTask = task.status === "open";
+
+    // 🔥 FINAL ACCESS RULE
+    if (
+      !isClient &&
+      !isAssignedVolunteer &&
+      !isAdmin &&
+      !(role === "volunteer" && isOpenTask)
+    ) {
       return res.status(403).json({ message: "Access denied" });
     }
 
@@ -131,6 +141,8 @@ export const getTaskById = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch task" });
   }
 };
+
+
 
 
 /* ================= SUBMISSION FLOW ================= */

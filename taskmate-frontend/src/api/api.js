@@ -164,3 +164,23 @@ export const rateTask = async (id, rating, review) => {
   });
   return res.json();
 };
+/* =========================
+   CHAT APIs
+========================= */
+
+export const getChatMessages = async (taskId) => {
+  const res = await fetch(`${API_URL}/chat/${taskId}`, {
+    credentials: "include",
+  });
+  return res.json();
+};
+
+export const sendChatMessage = async (data) => {
+  const res = await fetch(`${API_URL}/chat`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+};

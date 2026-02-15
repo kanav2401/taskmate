@@ -1,26 +1,36 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   getVolunteerTasks,
   submitTask,
   requestUnblock,
 } from "../api/api";
-import { getUser } from "../utils/auth";
 
 export default function VolunteerDashboard() {
   const [tasks, setTasks] = useState([]);
-  const user = getUser();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     loadTasks();
+    fetchUser();
   }, []);
+
+  const fetchUser = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/me", {
+        credentials: "include",
+      });
+      const data = await res.json();
+      setUser(data);
+    } catch {
+      setUser(null);
+    }
+  };
 
   const loadTasks = async () => {
     const data = await getVolunteerTasks();
-    if (Array.isArray(data)) {
-      setTasks(data);
-    } else {
-      setTasks([]);
-    }
+    if (Array.isArray(data)) setTasks(data);
+    else setTasks([]);
   };
 
   const handleSubmit = async (id) => {
@@ -51,9 +61,7 @@ export default function VolunteerDashboard() {
       {user?.isBlocked && !user?.isPermanentlyBlocked && (
         <div className="blocked-box">
           <h3>⚠ Account Temporarily Blocked</h3>
-          <p>
-            You missed a deadline. You can request admin to unblock you.
-          </p>
+          <p>You missed a deadline. You can request admin to unblock you.</p>
           <button className="btn warning-btn" onClick={handleRequestUnblock}>
             Request Unblock
           </button>
@@ -64,9 +72,7 @@ export default function VolunteerDashboard() {
       {user?.isPermanentlyBlocked && (
         <div className="blocked-box permanent">
           <h3>⛔ Permanently Banned</h3>
-          <p>
-            You have crossed the 3-strike limit. Please contact support.
-          </p>
+          <p>You have crossed the 3-strike limit. Please contact support.</p>
         </div>
       )}
 
@@ -90,6 +96,15 @@ export default function VolunteerDashboard() {
             </p>
 
             {getStatusBadge(task.status)}
+
+            {/* 🔥 NEW: VIEW DETAILS BUTTON */}
+            <Link
+              to={`/task/${task._id}`}
+              className="btn"
+              style={{ marginTop: "10px", display: "inline-block" }}
+            >
+              View Details
+            </Link>
 
             {task.status === "accepted" && !user?.isBlocked && (
               <button

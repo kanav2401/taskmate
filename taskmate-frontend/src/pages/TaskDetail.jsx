@@ -78,25 +78,19 @@ export default function TaskDetail() {
         <>
           <hr />
 
-          {!showChat ? (
-            <button
-              className="btn"
-              onClick={() => setShowChat(true)}
-            >
-              💬 Open Chat
-            </button>
-          ) : (
-            <>
-              <button
-                className="btn"
-                style={{ marginBottom: "15px", background: "#ef4444" }}
-                onClick={() => setShowChat(false)}
-              >
-                Close Chat
-              </button>
+          <button
+            className="btn"
+            onClick={() => setShowChat(true)}
+          >
+            💬 Open Chat
+          </button>
 
-              <Chat taskId={task._id} user={user} />
-            </>
+          {showChat && (
+            <Chat
+              taskId={task._id}
+              user={user}
+              onClose={() => setShowChat(false)}
+            />
           )}
         </>
       )}

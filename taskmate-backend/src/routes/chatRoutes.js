@@ -1,5 +1,6 @@
 import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
+import upload from "../middleware/upload.js";
 import Message from "../models/Message.js";
 import Task from "../models/Task.js";
 
@@ -27,6 +28,15 @@ router.get("/:taskId", authMiddleware, async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
+    await Message.updateMany(
+      {
+        task: req.params.taskId,
+        sender: { $ne: userId },
+        seen: false,
+      },
+      { seen: true, delivered: true }
+    );
+
     const messages = await Message.find({
       task: req.params.taskId,
     }).sort({ createdAt: 1 });
@@ -38,33 +48,18 @@ router.get("/:taskId", authMiddleware, async (req, res) => {
 });
 
 /* =========================
-   SEND MESSAGE
+   SEND TEXT MESSAGE
 ========================= */
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { taskId, text } = req.body;
-
-    const task = await Task.findById(taskId);
-
-    if (!task) {
-      return res.status(404).json({ message: "Task not found" });
-    }
-
-    const userId = req.user.id;
-
-    const isClient = task.client.toString() === userId;
-    const isVolunteer =
-      task.volunteer && task.volunteer.toString() === userId;
-    const isAdmin = req.user.role === "admin";
-
-    if (!isClient && !isVolunteer && !isAdmin) {
-      return res.status(403).json({ message: "Access denied" });
-    }
+    const { taskId, text, fileUrl } = req.body;
 
     const message = await Message.create({
       task: taskId,
-      sender: userId,
-      text,
+      sender: req.user.id,
+      text: text || "",
+      fileUrl: fileUrl || null,
+      delivered: true,
     });
 
     res.json(message);
@@ -72,5 +67,19 @@ router.post("/", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Message send failed" });
   }
 });
+
+/* =========================
+   FILE UPLOAD
+========================= */
+router.post(
+  "/upload",
+  authMiddleware,
+  upload.single("file"),
+  (req, res) => {
+    res.json({
+      fileUrl: `http://localhost:5000/uploads/${req.file.filename}`,
+    });
+  }
+);
 
 export default router;

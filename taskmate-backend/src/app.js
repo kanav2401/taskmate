@@ -9,25 +9,19 @@ import chatRoutes from "./routes/chatRoutes.js";
 
 const app = express();
 
-/* ===============================
-   CORS CONFIG (IMPORTANT)
-=============================== */
 app.use(
   cors({
-    origin: "http://localhost:5173", // frontend URL
-    credentials: true, // allow cookies
+    origin: "http://localhost:5173",
+    credentials: true,
   })
 );
 
-/* ===============================
-   MIDDLEWARE
-=============================== */
 app.use(express.json());
 app.use(cookieParser());
 
-/* ===============================
-   ROUTES
-=============================== */
+// 🔥 Serve uploaded files
+app.use("/uploads", express.static("uploads"));
+
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/admin", adminRoutes);

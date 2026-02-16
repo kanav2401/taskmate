@@ -184,3 +184,15 @@ export const sendChatMessage = async (data) => {
   });
   return res.json();
 };
+export const uploadChatFile = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`${API_URL}/chat/upload`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  });
+
+  return res.json();
+};

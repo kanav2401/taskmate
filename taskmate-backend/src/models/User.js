@@ -1,5 +1,12 @@
 import mongoose from "mongoose";
 
+const banHistorySchema = new mongoose.Schema({
+  reason: String,
+  bannedAt: { type: Date, default: Date.now },
+  bannedUntil: Date,
+  permanent: { type: Boolean, default: false },
+});
+
 const userSchema = new mongoose.Schema(
   {
     name: String,
@@ -21,19 +28,23 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-averageRating: {
-  type: Number,
-  default: 0,
-},
-totalRatings: {
-  type: Number,
-  default: 0,
-},
 
-    blockCount: {
-      type: Number,
-      default: 0,
+    banReason: {
+      type: String,
+      default: "",
     },
+
+    banUntil: {
+      type: Date,
+      default: null,
+    },
+
+    banHistory: [banHistorySchema],
+
+    averageRating: { type: Number, default: 0 },
+    totalRatings: { type: Number, default: 0 },
+
+    blockCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

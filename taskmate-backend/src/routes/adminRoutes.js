@@ -1,42 +1,38 @@
 import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
 import adminMiddleware from "../middleware/adminMiddleware.js";
+
 import {
-  getAllUsers,
-  unblockUser,
-  getAllTasks,
   getAdminStats,
+  getAllUsers,
+  getAllTasks,
+  banUser,
+  unblockUser,
 } from "../controllers/adminController.js";
 
 const router = express.Router();
 
-/*
-=====================================
-   🔐 ALL ADMIN ROUTES PROTECTED
-=====================================
-   1. Must be logged in
-   2. Must be admin
-=====================================
-*/
+/* =====================================
+   PROTECTED ADMIN ROUTES
+===================================== */
 router.use(authMiddleware);
 router.use(adminMiddleware);
 
-/*
-=====================================
-   📊 ADMIN DASHBOARD DATA
-=====================================
-*/
-
-// Get admin stats (users, tasks, blocked count)
+/* =====================================
+   ANALYTICS
+===================================== */
 router.get("/stats", getAdminStats);
 
-// Get all users
+/* =====================================
+   USERS
+===================================== */
 router.get("/users", getAllUsers);
-
-// Unblock user
+router.put("/ban/:id", banUser);
 router.put("/unblock/:id", unblockUser);
 
-// Get all tasks (full system overview)
+/* =====================================
+   TASKS
+===================================== */
 router.get("/tasks", getAllTasks);
 
 export default router;

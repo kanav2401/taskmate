@@ -48,9 +48,34 @@ export default function AdminDashboard() {
     loadData();
   };
 
+  /* ================= NEW: BAN USER ================= */
+
+  const handleBan = async (id, permanent = false) => {
+    const reason = prompt("Enter ban reason:");
+    if (!reason) return;
+
+    let days = 0;
+    if (!permanent) {
+      days = prompt("Ban for how many days?");
+      if (!days) return;
+    }
+
+    await fetch(`http://localhost:5000/api/admin/ban/${id}`, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        reason,
+        days,
+        permanent,
+      }),
+    });
+
+    loadData();
+  };
+
   /* ================= Analytics Data ================= */
 
-  // Group tasks by day
   const tasksPerDay = Object.values(
     tasks.reduce((acc, task) => {
       const date = new Date(task.createdAt).toLocaleDateString();
@@ -60,14 +85,12 @@ export default function AdminDashboard() {
     }, {})
   );
 
-  // Growth trend (cumulative)
   let cumulative = 0;
   const growthTrend = tasksPerDay.map((item) => {
     cumulative += item.count;
     return { ...item, total: cumulative };
   });
 
-  // Status distribution
   const statusData = Object.values(
     tasks.reduce((acc, task) => {
       const status = task.status;
@@ -102,7 +125,6 @@ export default function AdminDashboard() {
       {/* ================= CHARTS ================= */}
       <div className="charts-grid">
 
-        {/* 📊 Bar Chart */}
         <div className="chart-card">
           <h2>Tasks Per Day</h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -116,7 +138,6 @@ export default function AdminDashboard() {
           </ResponsiveContainer>
         </div>
 
-        {/* 📈 Line Chart */}
         <div className="chart-card">
           <h2>Growth Trend</h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -130,7 +151,6 @@ export default function AdminDashboard() {
           </ResponsiveContainer>
         </div>
 
-        {/* 🥧 Pie Chart */}
         <div className="chart-card">
           <h2>Task Status Distribution</h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -167,6 +187,7 @@ export default function AdminDashboard() {
               <th>Email</th>
               <th>Role</th>
               <th>Status</th>
+              <th>Ban Info</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -176,6 +197,7 @@ export default function AdminDashboard() {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>
+
                 <td>
                   <span
                     className={
@@ -187,7 +209,45 @@ export default function AdminDashboard() {
                     {user.isBlocked ? "Blocked" : "Active"}
                   </span>
                 </td>
+
+                {/* Ban Info */}
                 <td>
+                  {user.isBlocked && (
+                    <>
+                      <div>Reason: {user.banReason || "—"}</div>
+                      {!user.isPermanentlyBlocked && user.banUntil && (
+                        <div>
+                          Until: {new Date(user.banUntil).toDateString()}
+                        </div>
+                      )}
+                      {user.isPermanentlyBlocked && (
+                        <div>Permanent Ban</div>
+                      )}
+                    </>
+                  )}
+                </td>
+
+                <td>
+                  {!user.isBlocked && user.role !== "admin" && (
+                    <>
+                      <button
+                        className="btn-small"
+                        style={{ background: "#f59e0b", marginRight: "5px" }}
+                        onClick={() => handleBan(user._id, false)}
+                      >
+                        Temp Ban
+                      </button>
+
+                      <button
+                        className="btn-small"
+                        style={{ background: "#ef4444" }}
+                        onClick={() => handleBan(user._id, true)}
+                      >
+                        Permanent
+                      </button>
+                    </>
+                  )}
+
                   {user.isBlocked && (
                     <button
                       className="btn-small"

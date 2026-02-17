@@ -31,7 +31,7 @@ export default function ClientDashboard() {
 
   return (
     <div className="dashboard">
-      <h1> Dashboard</h1>
+      <h1> Client Dashboard</h1>
 
       <button className="btn" onClick={() => navigate("/post-task")}>
         + Post New Task

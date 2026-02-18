@@ -38,6 +38,14 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+unblockRequested: {
+  type: Boolean,
+  default: false,
+},
+unblockMessage: {
+  type: String,
+  default: "",
+},
 
     banHistory: [banHistorySchema],
 

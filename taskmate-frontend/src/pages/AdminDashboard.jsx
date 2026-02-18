@@ -48,7 +48,7 @@ export default function AdminDashboard() {
     loadData();
   };
 
-  /* ================= NEW: BAN USER ================= */
+  /* ================= BAN USER ================= */
 
   const handleBan = async (id, permanent = false) => {
     const reason = prompt("Enter ban reason:");
@@ -69,6 +69,17 @@ export default function AdminDashboard() {
         days,
         permanent,
       }),
+    });
+
+    loadData();
+  };
+
+  /* ================= APPROVE UNBLOCK REQUEST ================= */
+
+  const handleApproveRequest = async (id) => {
+    await fetch(`http://localhost:5000/api/admin/unblock/${id}`, {
+      method: "PUT",
+      credentials: "include",
     });
 
     loadData();
@@ -188,12 +199,21 @@ export default function AdminDashboard() {
               <th>Role</th>
               <th>Status</th>
               <th>Ban Info</th>
+              <th>Request</th>
               <th>Action</th>
             </tr>
           </thead>
+
           <tbody>
             {users.map((user) => (
-              <tr key={user._id}>
+              <tr
+                key={user._id}
+                style={
+                  user.unblockRequested
+                    ? { background: "#fff7ed" }
+                    : {}
+                }
+              >
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>
@@ -215,14 +235,30 @@ export default function AdminDashboard() {
                   {user.isBlocked && (
                     <>
                       <div>Reason: {user.banReason || "—"}</div>
+
                       {!user.isPermanentlyBlocked && user.banUntil && (
                         <div>
                           Until: {new Date(user.banUntil).toDateString()}
                         </div>
                       )}
+
                       {user.isPermanentlyBlocked && (
                         <div>Permanent Ban</div>
                       )}
+                    </>
+                  )}
+                </td>
+
+                {/* Unblock Request */}
+                <td>
+                  {user.unblockRequested && (
+                    <>
+                      <div style={{ color: "#ea580c", fontWeight: "600" }}>
+                        Unblock Requested
+                      </div>
+                      <div style={{ fontSize: "12px" }}>
+                        {user.unblockMessage}
+                      </div>
                     </>
                   )}
                 </td>
@@ -248,12 +284,22 @@ export default function AdminDashboard() {
                     </>
                   )}
 
-                  {user.isBlocked && (
+                  {user.isBlocked && !user.unblockRequested && (
                     <button
                       className="btn-small"
                       onClick={() => handleUnblock(user._id)}
                     >
                       Unblock
+                    </button>
+                  )}
+
+                  {user.unblockRequested && (
+                    <button
+                      className="btn-small"
+                      style={{ background: "#16a34a" }}
+                      onClick={() => handleApproveRequest(user._id)}
+                    >
+                      Approve Request
                     </button>
                   )}
                 </td>

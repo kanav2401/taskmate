@@ -20,6 +20,7 @@ import BlockedBanner from "./components/BlockedBanner";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminRoute from "./components/AdminRoute";
 import Layout from "./components/Layout";
+import ComplaintCenter from "./pages/ComplaintCenter";
 
 
 
@@ -105,6 +106,14 @@ function App() {
   element={
     <ProtectedRoute>
       <AdminDashboard />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/complaint"
+  element={
+    <ProtectedRoute>
+      <ComplaintCenter />
     </ProtectedRoute>
   }
 />

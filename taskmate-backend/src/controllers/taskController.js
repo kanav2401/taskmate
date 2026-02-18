@@ -5,6 +5,12 @@ import User from "../models/User.js";
 
 // CREATE TASK
 export const createTask = async (req, res) => {
+  if (req.user.isBlocked) {
+    return res.status(403).json({
+      message: "Your account is blocked. You cannot create tasks.",
+    });
+  }
+
   if (req.user.role !== "client") {
     return res.status(403).json({ message: "Only clients can post tasks" });
   }
@@ -62,6 +68,12 @@ export const getOpenTasks = async (req, res) => {
 
 // ACCEPT TASK
 export const acceptTask = async (req, res) => {
+  if (req.user.isBlocked) {
+    return res.status(403).json({
+      message: "Your account is blocked. You cannot accept tasks.",
+    });
+  }
+
   if (req.user.role !== "volunteer") {
     return res.status(403).json({ message: "Only volunteers can accept tasks" });
   }
@@ -104,7 +116,6 @@ export const getVolunteerTasks = async (req, res) => {
 
 /* ================= TASK DETAIL ================= */
 
-// SINGLE TASK PAGE (CLIENT + VOLUNTEER ONLY)
 export const getTaskById = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id)
@@ -121,12 +132,9 @@ export const getTaskById = async (req, res) => {
     const isClient = task.client.id === userId;
     const isAssignedVolunteer =
       task.volunteer && task.volunteer.id === userId;
-
     const isAdmin = role === "admin";
-
     const isOpenTask = task.status === "open";
 
-    // 🔥 FINAL ACCESS RULE
     if (
       !isClient &&
       !isAssignedVolunteer &&
@@ -142,13 +150,16 @@ export const getTaskById = async (req, res) => {
   }
 };
 
-
-
-
 /* ================= SUBMISSION FLOW ================= */
 
-// VOLUNTEER: SUBMIT TASK
+// SUBMIT TASK
 export const submitTask = async (req, res) => {
+  if (req.user.isBlocked) {
+    return res.status(403).json({
+      message: "Your account is blocked. You cannot submit tasks.",
+    });
+  }
+
   if (req.user.role !== "volunteer") {
     return res.status(403).json({ message: "Only volunteers can submit tasks" });
   }
@@ -176,8 +187,14 @@ export const submitTask = async (req, res) => {
   }
 };
 
-// CLIENT: MARK TASK COMPLETED
+// COMPLETE TASK
 export const completeTask = async (req, res) => {
+  if (req.user.isBlocked) {
+    return res.status(403).json({
+      message: "Your account is blocked. You cannot complete tasks.",
+    });
+  }
+
   if (req.user.role !== "client") {
     return res.status(403).json({ message: "Only clients can complete tasks" });
   }
@@ -196,96 +213,20 @@ export const completeTask = async (req, res) => {
     task.status = "completed";
     await task.save();
 
-    // ✅ AUTO UNBLOCK VOLUNTEER
-    if (task.volunteer) {
-      await User.findByIdAndUpdate(task.volunteer, {
-        isBlocked: false,
-      });
-    }
-
     res.json({ message: "Task marked as completed" });
   } catch (error) {
     res.status(500).json({ message: "Completion failed" });
   }
 };
 
-/* ================= ADMIN / MANUAL ================= */
-
-// MANUAL UNBLOCK USER
-export const unblockUser = async (req, res) => {
-  try {
-    await User.findByIdAndUpdate(req.params.id, {
-      isBlocked: false,
-    });
-
-    res.json({ message: "User unblocked successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Unblock failed" });
-  }
-};
-/* VOLUNTEER REQUEST UNBLOCK */
-export const requestUnblock = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-
-    if (!user.isBlocked) {
-      return res.status(400).json({ message: "You are not blocked" });
-    }
-
-    if (user.isPermanentlyBlocked) {
-      return res.status(403).json({
-        message: "You are permanently banned. Contact support.",
-      });
-    }
-
-    user.unblockRequested = true;
-    await user.save();
-
-    res.json({ message: "Unblock request sent to admin" });
-  } catch (error) {
-    res.status(500).json({ message: "Request failed" });
-  }
-};
-/* ADMIN UNBLOCK USER */
-export const adminUnblockUser = async (req, res) => {
-  try {
-    if (req.user.role !== "admin") {
-      return res.status(403).json({ message: "Admin only" });
-    }
-
-    const user = await User.findById(req.params.id);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (user.isPermanentlyBlocked) {
-      return res.status(403).json({
-        message: "User permanently banned. Cannot unblock.",
-      });
-    }
-
-    if (user.blockCount >= 3) {
-      user.isPermanentlyBlocked = true;
-      await user.save();
-
-      return res.status(403).json({
-        message: "User permanently banned (3 strikes)",
-      });
-    }
-
-    user.isBlocked = false;
-    user.unblockRequested = false;
-
-    await user.save();
-
-    res.json({ message: "User unblocked successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Unblock failed" });
-  }
-};
-// CLIENT: RATE VOLUNTEER
+// RATE TASK
 export const rateTask = async (req, res) => {
+  if (req.user.isBlocked) {
+    return res.status(403).json({
+      message: "Your account is blocked. You cannot rate tasks.",
+    });
+  }
+
   if (req.user.role !== "client") {
     return res.status(403).json({ message: "Only clients can rate" });
   }
@@ -311,7 +252,6 @@ export const rateTask = async (req, res) => {
     task.review = review || "";
     await task.save();
 
-    // Update volunteer average rating
     const volunteer = await User.findById(task.volunteer);
 
     const totalScore =

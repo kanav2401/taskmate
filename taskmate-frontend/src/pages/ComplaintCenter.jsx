@@ -3,23 +3,57 @@ import { useState } from "react";
 export default function ComplaintCenter() {
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch(
-      "http://localhost:5000/api/users/request-unblock",
-      {
-        method: "PUT",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
-      }
-    );
+    if (!message.trim()) {
+      setError("Please enter a proper explanation.");
+      return;
+    }
 
-    const data = await res.json();
-    setSuccess(data.message);
-    setMessage("");
+    try {
+      setLoading(true);
+      setError("");
+      setSuccess("");
+
+      const res = await fetch(
+        "http://localhost:5000/api/users/request-unblock",
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      setSuccess("Request submitted successfully. Redirecting to login...");
+      setMessage("");
+
+      // 🔥 Auto logout after complaint submission
+      await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      // Redirect to login after short delay
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
+
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -34,6 +68,12 @@ export default function ComplaintCenter() {
       {success && (
         <div style={{ color: "green", marginBottom: "15px" }}>
           {success}
+        </div>
+      )}
+
+      {error && (
+        <div style={{ color: "red", marginBottom: "15px" }}>
+          {error}
         </div>
       )}
 
@@ -52,7 +92,9 @@ export default function ComplaintCenter() {
           }}
         />
 
-        <button className="btn">Submit Request</button>
+        <button className="btn" disabled={loading}>
+          {loading ? "Submitting..." : "Submit Request"}
+        </button>
       </form>
     </div>
   );

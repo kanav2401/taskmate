@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import Task from "../models/Task.js";
+import { sendEmail } from "../utils/emailService.js"; // ✅ EMAIL IMPORT
 
 /* =====================================
    BAN USER (TEMPORARY OR PERMANENT)
@@ -41,8 +42,24 @@ export const banUser = async (req, res) => {
 
     await user.save();
 
+    /* ✅ EMAIL TO USER */
+    await sendEmail({
+      to: user.email,
+      subject: "Account Blocked — TaskMate",
+      html: `
+        <h3>Your TaskMate account has been blocked</h3>
+        <p><b>Reason:</b> ${user.banReason}</p>
+        ${
+          permanent
+            ? "<p>This is a permanent ban.</p>"
+            : `<p>Blocked until: ${user.banUntil?.toDateString()}</p>`
+        }
+      `,
+    });
+
     res.json({ message: "User banned successfully" });
   } catch (error) {
+    console.error("Ban error:", error);
     res.status(500).json({ message: "Ban failed" });
   }
 };
@@ -69,12 +86,23 @@ export const unblockUser = async (req, res) => {
 
     await user.save();
 
+    /* ✅ EMAIL TO USER */
+    await sendEmail({
+      to: user.email,
+      subject: "Account Unblocked — TaskMate",
+      html: `
+        <h3>Good news!</h3>
+        <p>Your TaskMate account has been unblocked.</p>
+        <p>You can now continue using the platform.</p>
+      `,
+    });
+
     res.json({ message: "User unblocked successfully" });
   } catch (error) {
+    console.error("Unblock error:", error);
     res.status(500).json({ message: "Unblock failed" });
   }
 };
-
 
 /* =====================================
    GET ALL USERS

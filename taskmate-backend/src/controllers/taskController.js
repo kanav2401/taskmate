@@ -1,16 +1,11 @@
 import Task from "../models/Task.js";
 import User from "../models/User.js";
+import { sendEmail } from "../utils/emailService.js"; // ✅ EMAIL IMPORT
 
 /* ================= CLIENT ================= */
 
 // CREATE TASK
 export const createTask = async (req, res) => {
-  if (req.user.isBlocked) {
-    return res.status(403).json({
-      message: "Your account is blocked. You cannot create tasks.",
-    });
-  }
-
   if (req.user.role !== "client") {
     return res.status(403).json({ message: "Only clients can post tasks" });
   }
@@ -79,7 +74,7 @@ export const acceptTask = async (req, res) => {
   }
 
   try {
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findById(req.params.id).populate("client");
 
     if (!task || task.status !== "open") {
       return res.status(400).json({ message: "Task not available" });
@@ -91,8 +86,18 @@ export const acceptTask = async (req, res) => {
 
     await task.save();
 
+    // ✅ FIXED EMAIL CALL
+    if (task.client?.email) {
+      await sendEmail(
+        task.client.email,
+        "Task Accepted — TaskMate",
+        `<p>Your task "<b>${task.title}</b>" has been accepted by a volunteer.</p>`
+      );
+    }
+
     res.json({ message: "Task accepted successfully" });
   } catch (error) {
+    console.error("ACCEPT TASK ERROR:", error);
     res.status(500).json({ message: "Failed to accept task" });
   }
 };
@@ -132,6 +137,7 @@ export const getTaskById = async (req, res) => {
     const isClient = task.client.id === userId;
     const isAssignedVolunteer =
       task.volunteer && task.volunteer.id === userId;
+
     const isAdmin = role === "admin";
     const isOpenTask = task.status === "open";
 
@@ -165,7 +171,7 @@ export const submitTask = async (req, res) => {
   }
 
   try {
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findById(req.params.id).populate("client");
 
     if (!task || task.status !== "accepted") {
       return res.status(400).json({ message: "Task not valid for submission" });
@@ -181,8 +187,18 @@ export const submitTask = async (req, res) => {
 
     await task.save();
 
+    // ✅ FIXED EMAIL CALL
+    if (task.client?.email) {
+      await sendEmail(
+        task.client.email,
+        "Task Submitted — TaskMate",
+        `<p>Your task "<b>${task.title}</b>" has been submitted.</p>`
+      );
+    }
+
     res.json({ message: "Task submitted successfully" });
   } catch (error) {
+    console.error("SUBMIT TASK ERROR:", error);
     res.status(500).json({ message: "Submission failed" });
   }
 };
@@ -200,7 +216,7 @@ export const completeTask = async (req, res) => {
   }
 
   try {
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findById(req.params.id).populate("volunteer");
 
     if (!task || task.status !== "submitted") {
       return res.status(400).json({ message: "Task not ready for completion" });
@@ -213,20 +229,73 @@ export const completeTask = async (req, res) => {
     task.status = "completed";
     await task.save();
 
+    // ✅ FIXED EMAIL CALL
+    if (task.volunteer?.email) {
+      await sendEmail(
+        task.volunteer.email,
+        "Task Completed — TaskMate",
+        `<p>Great news! Task "<b>${task.title}</b>" has been marked completed.</p>`
+      );
+    }
+
     res.json({ message: "Task marked as completed" });
   } catch (error) {
+    console.error("COMPLETE TASK ERROR:", error);
     res.status(500).json({ message: "Completion failed" });
+  }
+};
+
+/* ================= ADMIN / MANUAL ================= */
+
+// UNBLOCK USER
+export const unblockUser = async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.params.id, {
+      isBlocked: false,
+    });
+
+    res.json({ message: "User unblocked successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Unblock failed" });
+  }
+};
+
+/* 🔥 FIXED — VOLUNTEER REQUEST UNBLOCK */
+export const requestUnblock = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user.isBlocked) {
+      return res.status(400).json({ message: "You are not blocked" });
+    }
+
+    if (user.isPermanentlyBlocked) {
+      return res.status(403).json({
+        message: "You are permanently banned. Contact support.",
+      });
+    }
+
+    user.unblockRequested = true;
+    await user.save();
+
+    console.log("ADMIN EMAIL:", process.env.ADMIN_EMAIL);
+
+    // ✅ CRITICAL FIX HERE
+    await sendEmail(
+      process.env.ADMIN_EMAIL,
+      "Unblock Request — TaskMate",
+      `<p>User <b>${user.email}</b> requested to be unblocked.</p>`
+    );
+
+    res.json({ message: "Unblock request sent to admin" });
+  } catch (error) {
+    console.error("REQUEST UNBLOCK ERROR:", error);
+    res.status(500).json({ message: "Request failed" });
   }
 };
 
 // RATE TASK
 export const rateTask = async (req, res) => {
-  if (req.user.isBlocked) {
-    return res.status(403).json({
-      message: "Your account is blocked. You cannot rate tasks.",
-    });
-  }
-
   if (req.user.role !== "client") {
     return res.status(403).json({ message: "Only clients can rate" });
   }

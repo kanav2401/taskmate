@@ -1,6 +1,7 @@
 import Task from "../models/Task.js";
 import User from "../models/User.js";
-import { sendEmail } from "../utils/emailService.js"; // ✅ EMAIL IMPORT
+import { sendEmail } from "../utils/emailService.js";
+import { onlineUsers, io } from "../server.js";
 
 /* ================= CLIENT ================= */
 
@@ -22,6 +23,7 @@ export const createTask = async (req, res) => {
 
     res.json({ message: "Task created successfully", task });
   } catch (error) {
+    console.error("CREATE TASK ERROR:", error);
     res.status(500).json({ message: "Task creation failed" });
   }
 };
@@ -86,7 +88,20 @@ export const acceptTask = async (req, res) => {
 
     await task.save();
 
-    // ✅ FIXED EMAIL CALL
+    /* 🔔 REALTIME NOTIFICATION TO CLIENT */
+    const clientSocketId = onlineUsers.get(
+      task.client?._id?.toString()
+    );
+
+    if (clientSocketId) {
+      io.to(clientSocketId).emit("newNotification", {
+        title: "Task Accepted",
+        message: `Your task "${task.title}" was accepted.`,
+        isRead: false,
+      });
+    }
+
+    /* 📧 EMAIL TO CLIENT */
     if (task.client?.email) {
       await sendEmail(
         task.client.email,
@@ -137,7 +152,6 @@ export const getTaskById = async (req, res) => {
     const isClient = task.client.id === userId;
     const isAssignedVolunteer =
       task.volunteer && task.volunteer.id === userId;
-
     const isAdmin = role === "admin";
     const isOpenTask = task.status === "open";
 
@@ -187,7 +201,20 @@ export const submitTask = async (req, res) => {
 
     await task.save();
 
-    // ✅ FIXED EMAIL CALL
+    /* 🔔 REALTIME NOTIFICATION TO CLIENT */
+    const clientSocketId = onlineUsers.get(
+      task.client?._id?.toString()
+    );
+
+    if (clientSocketId) {
+      io.to(clientSocketId).emit("newNotification", {
+        title: "Task Submitted",
+        message: `Task "${task.title}" has been submitted.`,
+        isRead: false,
+      });
+    }
+
+    /* 📧 EMAIL */
     if (task.client?.email) {
       await sendEmail(
         task.client.email,
@@ -229,7 +256,20 @@ export const completeTask = async (req, res) => {
     task.status = "completed";
     await task.save();
 
-    // ✅ FIXED EMAIL CALL
+    /* 🔔 REALTIME NOTIFICATION TO VOLUNTEER */
+    const volunteerSocketId = onlineUsers.get(
+      task.volunteer?._id?.toString()
+    );
+
+    if (volunteerSocketId) {
+      io.to(volunteerSocketId).emit("newNotification", {
+        title: "Task Completed",
+        message: `Task "${task.title}" marked completed.`,
+        isRead: false,
+      });
+    }
+
+    /* 📧 EMAIL */
     if (task.volunteer?.email) {
       await sendEmail(
         task.volunteer.email,
@@ -260,7 +300,7 @@ export const unblockUser = async (req, res) => {
   }
 };
 
-/* 🔥 FIXED — VOLUNTEER REQUEST UNBLOCK */
+// VOLUNTEER REQUEST UNBLOCK
 export const requestUnblock = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -278,9 +318,6 @@ export const requestUnblock = async (req, res) => {
     user.unblockRequested = true;
     await user.save();
 
-    console.log("ADMIN EMAIL:", process.env.ADMIN_EMAIL);
-
-    // ✅ CRITICAL FIX HERE
     await sendEmail(
       process.env.ADMIN_EMAIL,
       "Unblock Request — TaskMate",

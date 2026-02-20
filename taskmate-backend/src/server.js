@@ -46,8 +46,16 @@ const io = new Server(server, {
   },
 });
 
+/* 🔥 STORE CONNECTED USERS */
+const onlineUsers = new Map();
+
 io.on("connection", (socket) => {
   console.log("🔵 User connected:", socket.id);
+
+  /* 🔥 USER REGISTER FOR NOTIFICATIONS */
+  socket.on("registerUser", (userId) => {
+    onlineUsers.set(userId, socket.id);
+  });
 
   socket.on("joinRoom", (taskId) => {
     socket.join(taskId);
@@ -59,8 +67,19 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("🔴 User disconnected:", socket.id);
+
+    // remove user from map
+    for (const [userId, sockId] of onlineUsers.entries()) {
+      if (sockId === socket.id) {
+        onlineUsers.delete(userId);
+        break;
+      }
+    }
   });
 });
+
+/* 🔥 EXPORT IO + USERS */
+export { io, onlineUsers };
 
 /* ===============================
    START SERVER

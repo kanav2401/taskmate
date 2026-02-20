@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { isLoggedIn, removeUser, getUser } from "../utils/auth";
+import NotificationBell from "./NotificationBell"; // ✅ NEW
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -24,6 +25,9 @@ export default function Navbar() {
 
       <div className="nav-links">
         <Link to="/">Home</Link>
+
+        {/* 🔔 NOTIFICATION BELL (NEW) */}
+        {isLoggedIn() && <NotificationBell />}
 
         {/* VOLUNTEER LINKS */}
         {isLoggedIn() && user?.role === "volunteer" && (

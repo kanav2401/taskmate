@@ -1,5 +1,6 @@
 import Task from "../models/Task.js";
 import User from "../models/User.js";
+import Notification from "../models/Notification.js";
 import { sendEmail } from "../utils/emailService.js";
 import { onlineUsers, io } from "../server.js";
 
@@ -85,10 +86,18 @@ export const acceptTask = async (req, res) => {
     task.status = "accepted";
     task.volunteer = req.user.id;
     task.acceptedAt = new Date();
-
     await task.save();
 
-    /* 🔔 REALTIME NOTIFICATION TO CLIENT */
+    /* 🔥 SAVE NOTIFICATION IN DB */
+    if (task.client?._id) {
+      await Notification.create({
+        user: task.client._id,
+        title: "Task Accepted",
+        message: `Your task "${task.title}" was accepted.`,
+      });
+    }
+
+    /* 🔔 REALTIME */
     const clientSocketId = onlineUsers.get(
       task.client?._id?.toString()
     );
@@ -101,7 +110,7 @@ export const acceptTask = async (req, res) => {
       });
     }
 
-    /* 📧 EMAIL TO CLIENT */
+    /* 📧 EMAIL */
     if (task.client?.email) {
       await sendEmail(
         task.client.email,
@@ -166,6 +175,7 @@ export const getTaskById = async (req, res) => {
 
     res.json(task);
   } catch (error) {
+    console.error("GET TASK ERROR:", error);
     res.status(500).json({ message: "Failed to fetch task" });
   }
 };
@@ -198,10 +208,18 @@ export const submitTask = async (req, res) => {
     task.status = "submitted";
     task.submittedAt = new Date();
     task.submissionNote = req.body.note || "";
-
     await task.save();
 
-    /* 🔔 REALTIME NOTIFICATION TO CLIENT */
+    /* 🔥 SAVE NOTIFICATION */
+    if (task.client?._id) {
+      await Notification.create({
+        user: task.client._id,
+        title: "Task Submitted",
+        message: `Task "${task.title}" has been submitted.`,
+      });
+    }
+
+    /* 🔔 REALTIME */
     const clientSocketId = onlineUsers.get(
       task.client?._id?.toString()
     );
@@ -256,7 +274,16 @@ export const completeTask = async (req, res) => {
     task.status = "completed";
     await task.save();
 
-    /* 🔔 REALTIME NOTIFICATION TO VOLUNTEER */
+    /* 🔥 SAVE NOTIFICATION */
+    if (task.volunteer?._id) {
+      await Notification.create({
+        user: task.volunteer._id,
+        title: "Task Completed",
+        message: `Task "${task.title}" marked completed.`,
+      });
+    }
+
+    /* 🔔 REALTIME */
     const volunteerSocketId = onlineUsers.get(
       task.volunteer?._id?.toString()
     );
@@ -285,20 +312,7 @@ export const completeTask = async (req, res) => {
   }
 };
 
-/* ================= ADMIN / MANUAL ================= */
-
-// UNBLOCK USER
-export const unblockUser = async (req, res) => {
-  try {
-    await User.findByIdAndUpdate(req.params.id, {
-      isBlocked: false,
-    });
-
-    res.json({ message: "User unblocked successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Unblock failed" });
-  }
-};
+/* ================= OTHER ================= */
 
 // VOLUNTEER REQUEST UNBLOCK
 export const requestUnblock = async (req, res) => {

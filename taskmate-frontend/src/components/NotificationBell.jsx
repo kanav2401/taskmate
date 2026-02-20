@@ -11,57 +11,83 @@ export default function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
   const [open, setOpen] = useState(false);
 
+  /* ================= LOAD ================= */
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
 
-    // 🔥 REGISTER USER SOCKET
+    // 🔥 register user for realtime notifications
     socket.emit("registerUser", user.id);
 
+    // 🔥 load existing notifications
     loadNotifications();
 
+    // 🔥 realtime listener
     socket.on("newNotification", (data) => {
       console.log("🔥 NOTIFICATION RECEIVED:", data);
       setNotifications((prev) => [data, ...prev]);
     });
 
     return () => socket.off("newNotification");
-  }, []);
+  }, [user?.id]);
 
+  /* ================= FETCH NOTIFICATIONS ================= */
   const loadNotifications = async () => {
     try {
       const res = await fetch(
         "http://localhost:5000/api/notifications",
-        { credentials: "include" }
+        {
+          method: "GET",
+          credentials: "include", // ✅ VERY IMPORTANT
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
+
+      if (!res.ok) {
+        console.error("❌ Notification fetch failed:", res.status);
+        return;
+      }
+
       const data = await res.json();
       setNotifications(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error("Notification load error");
+      console.error("❌ Notification error:", err);
     }
   };
 
+  /* ================= UNREAD COUNT ================= */
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
+  /* ================= MARK READ ================= */
   const markRead = async (id) => {
-    await fetch(
-      `http://localhost:5000/api/notifications/${id}/read`,
-      {
-        method: "PUT",
-        credentials: "include",
-      }
-    );
+    try {
+      await fetch(
+        `http://localhost:5000/api/notifications/${id}/read`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    setNotifications((prev) =>
-      prev.map((n) =>
-        n._id === id ? { ...n, isRead: true } : n
-      )
-    );
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n._id === id ? { ...n, isRead: true } : n
+        )
+      );
+    } catch (err) {
+      console.error("❌ Mark read error:", err);
+    }
   };
 
   if (!user) return null;
 
   return (
     <div className="notif-wrapper">
+      {/* 🔔 BELL */}
       <div className="notif-bell" onClick={() => setOpen(!open)}>
         🔔
         {unreadCount > 0 && (
@@ -69,14 +95,15 @@ export default function NotificationBell() {
         )}
       </div>
 
+      {/* 📦 PANEL */}
       {open && (
         <div className="notif-panel">
           {notifications.length === 0 ? (
             <p>No notifications</p>
           ) : (
-            notifications.map((n, index) => (
+            notifications.map((n) => (
               <div
-                key={index}
+                key={n._id}
                 className={`notif-item ${n.isRead ? "" : "unread"}`}
                 onClick={() => markRead(n._id)}
               >

@@ -61,25 +61,27 @@ export const login = async (req, res) => {
     const refreshToken = generateRefreshToken(user);
 
     res
-      .cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-      })
-      .cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-      })
-      .json({
-        message: "Login successful",
-        user: {
-          id: user._id,
-          name: user.name,
-          role: user.role,
-          isBlocked: user.isBlocked,
-        },
-      });
+  .cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: false,        // keep false in local
+    sameSite: "lax",      // important
+    path: "/",            // 🔥 add this
+  })
+  .cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    path: "/",            // 🔥 add this
+  })
+  .json({
+    message: "Login successful",
+    user: {
+      id: user._id,
+      name: user.name,
+      role: user.role,
+      isBlocked: user.isBlocked,
+    },
+  });
   } catch (error) {
     console.error("LOGIN ERROR:", error); // 🔥 this shows real backend error
     res.status(500).json({ message: "Login failed" });

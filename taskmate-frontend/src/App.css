@@ -883,3 +883,174 @@ a {
   background: #eef4ff;
   font-weight: 600;
 }
+/* ⭐ STAR RATING */
+
+.star-rating {
+  display: flex;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 26px;
+  margin: 6px 0;
+}
+
+.star {
+  color: #ccc;
+  transition: 0.2s;
+}
+
+.star.filled {
+  color: #ffb400;
+}
+
+.star:hover {
+  transform: scale(1.15);
+}
+
+/* ⭐ RATING BOX */
+
+.rating-box {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.rating-box textarea {
+  width: 100%;
+  min-height: 70px;
+  margin-top: 8px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.already-rated {
+  margin-top: 8px;
+  color: green;
+  font-weight: 600;
+}
+/* ================= DASHBOARD ================= */
+
+.dashboard-title {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* grid layout */
+.task-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* ================= MODERN CARD ================= */
+
+.task-card-modern {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.task-card-modern:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* header */
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* description */
+.task-desc {
+  margin: 10px 0;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* ================= STATUS BADGE ================= */
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-open {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-accepted {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-submitted {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-completed {
+  background: #e0f7fa;
+  color: #00796b;
+}
+
+/* ================= RATING BOX ================= */
+
+.rating-box-modern {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #f9fafc;
+  border: 1px solid #e6e9ef;
+}
+
+.rating-box-modern textarea {
+  width: 100%;
+  min-height: 70px;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-family: inherit;
+}
+
+/* ================= BUTTON ================= */
+
+.modern-btn {
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* ================= ALREADY RATED ================= */
+
+.already-rated-box {
+  margin-top: 12px;
+  padding: 10px;
+  background: #f1fff5;
+  border: 1px solid #b7ebc6;
+  border-radius: 8px;
+  color: #1b8a3e;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ================= TEXT STATES ================= */
+
+.loading-text,
+.empty-text {
+  text-align: center;
+  color: #666;
+  margin-top: 40px;
+}

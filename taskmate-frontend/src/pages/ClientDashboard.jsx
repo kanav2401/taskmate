@@ -5,6 +5,7 @@ import {
   rateTask,
 } from "../api/api";
 import StarRating from "../components/StarRating";
+import Pagination from "../components/Pagination";
 
 export default function ClientDashboard() {
   const [tasks, setTasks] = useState([]);
@@ -12,14 +13,27 @@ export default function ClientDashboard() {
   const [reviews, setReviews] = useState({});
   const [loading, setLoading] = useState(true);
 
+  // 🔥 Pagination States
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
     loadTasks();
-  }, []);
+  }, [page, limit]);
 
   const loadTasks = async () => {
     try {
-      const data = await getClientTasks();
-      setTasks(Array.isArray(data) ? data : []);
+      const data = await getClientTasks(page, limit);
+
+      if (data?.data) {
+        setTasks(data.data);
+        setTotal(data.total || 0);
+        setTotalPages(data.totalPages || 1);
+      } else {
+        setTasks([]);
+      }
     } catch (err) {
       console.error("Failed to load tasks");
     } finally {
@@ -73,94 +87,106 @@ export default function ClientDashboard() {
       {tasks.length === 0 ? (
         <p className="empty-text-modern">No tasks yet</p>
       ) : (
-        <div className="task-grid-modern">
-          {tasks.map((task) => (
-            <div key={task._id} className="task-card-premium">
+        <>
+          <div className="task-grid-modern">
+            {tasks.map((task) => (
+              <div key={task._id} className="task-card-premium">
 
-              {/* HEADER */}
-              <div className="task-header-modern">
-                <h3>{task.title}</h3>
-                <span className={`status-badge-modern status-${task.status}`}>
-                  {task.status}
-                </span>
-              </div>
-
-              <p className="task-desc-modern">
-                {task.description}
-              </p>
-
-              {/* VOLUNTEER INFO */}
-              {task.volunteer && (
-                <div className="volunteer-info-box">
-                  <div>
-                    👤 <strong>{task.volunteer.name}</strong>
-                  </div>
-
-                  <div className="rating-badge">
-                    ⭐ {task.volunteer.averageRating?.toFixed(1) || "0.0"} 
-                    <span className="rating-count">
-                      ({task.volunteer.totalRatings || 0})
-                    </span>
-                  </div>
+                {/* HEADER */}
+                <div className="task-header-modern">
+                  <h3>{task.title}</h3>
+                  <span className={`status-badge-modern status-${task.status}`}>
+                    {task.status}
+                  </span>
                 </div>
-              )}
 
-              {/* COMPLETE BUTTON */}
-              {task.status === "submitted" && (
-                <button
-                  className="btn-primary modern-btn"
-                  onClick={() => handleComplete(task._id)}
-                >
-                  ✅ Mark as Complete
-                </button>
-              )}
+                <p className="task-desc-modern">
+                  {task.description}
+                </p>
 
-              {/* RATING UI */}
-              {task.status === "completed" && !task.rating && (
-                <div className="rating-box-modern">
-                  <h4>⭐ Rate Volunteer</h4>
+                {/* VOLUNTEER INFO */}
+                {task.volunteer && (
+                  <div className="volunteer-info-box">
+                    <div>
+                      👤 <strong>{task.volunteer.name}</strong>
+                    </div>
 
-                  <StarRating
-                    value={ratings[task._id] || 0}
-                    onChange={(val) =>
-                      setRatings((prev) => ({
-                        ...prev,
-                        [task._id]: val,
-                      }))
-                    }
-                  />
+                    <div className="rating-badge">
+                      ⭐ {task.volunteer.averageRating?.toFixed(1) || "0.0"} 
+                      <span className="rating-count">
+                        ({task.volunteer.totalRatings || 0})
+                      </span>
+                    </div>
+                  </div>
+                )}
 
-                  <textarea
-                    placeholder="Write review (optional)"
-                    value={reviews[task._id] || ""}
-                    onChange={(e) =>
-                      setReviews((prev) => ({
-                        ...prev,
-                        [task._id]: e.target.value,
-                      }))
-                    }
-                    className="review-textarea-modern"
-                  />
-
+                {/* COMPLETE BUTTON */}
+                {task.status === "submitted" && (
                   <button
                     className="btn-primary modern-btn"
-                    onClick={() => handleRatingSubmit(task._id)}
+                    onClick={() => handleComplete(task._id)}
                   >
-                    Submit Rating
+                    ✅ Mark as Complete
                   </button>
-                </div>
-              )}
+                )}
 
-              {/* ALREADY RATED */}
-              {task.rating && (
-                <div className="already-rated-box-modern">
-                  ⭐ You rated this volunteer {task.rating}/5
-                </div>
-              )}
+                {/* RATING UI */}
+                {task.status === "completed" && !task.rating && (
+                  <div className="rating-box-modern">
+                    <h4>⭐ Rate Volunteer</h4>
 
-            </div>
-          ))}
-        </div>
+                    <StarRating
+                      value={ratings[task._id] || 0}
+                      onChange={(val) =>
+                        setRatings((prev) => ({
+                          ...prev,
+                          [task._id]: val,
+                        }))
+                      }
+                    />
+
+                    <textarea
+                      placeholder="Write review (optional)"
+                      value={reviews[task._id] || ""}
+                      onChange={(e) =>
+                        setReviews((prev) => ({
+                          ...prev,
+                          [task._id]: e.target.value,
+                        }))
+                      }
+                      className="review-textarea-modern"
+                    />
+
+                    <button
+                      className="btn-primary modern-btn"
+                      onClick={() => handleRatingSubmit(task._id)}
+                    >
+                      Submit Rating
+                    </button>
+                  </div>
+                )}
+
+                {/* ALREADY RATED */}
+                {task.rating && (
+                  <div className="already-rated-box-modern">
+                    ⭐ You rated this volunteer {task.rating}/5
+                  </div>
+                )}
+
+              </div>
+            ))}
+          </div>
+
+          {/* 🔥 PAGINATION */}
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            total={total}
+            limit={limit}
+            setPage={setPage}
+            setLimit={setLimit}
+          />
+        </>
       )}
     </div>
   );

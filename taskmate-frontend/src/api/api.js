@@ -4,7 +4,7 @@ const API_URL = "http://localhost:5000/api";
    🔥 COMMON FETCH OPTIONS
 ======================================== */
 const defaultOptions = {
-  credentials: "include", // ✅ CRITICAL for cookies
+  credentials: "include",
   headers: {
     "Content-Type": "application/json",
   },
@@ -20,7 +20,6 @@ export const loginUser = async (data) => {
     method: "POST",
     body: JSON.stringify(data),
   });
-
   return res.json();
 };
 
@@ -30,7 +29,6 @@ export const registerUser = async (data) => {
     method: "POST",
     body: JSON.stringify(data),
   });
-
   return res.json();
 };
 
@@ -54,11 +52,14 @@ export const postTask = async (data) => {
   return res.json();
 };
 
-export const getClientTasks = async () => {
-  const res = await fetch(`${API_URL}/tasks/client`, {
-    ...defaultOptions,
-    cache: "no-store",
-  });
+export const getClientTasks = async (page = 1, limit = 8) => {
+  const res = await fetch(
+    `${API_URL}/tasks/client?page=${page}&limit=${limit}`,
+    {
+      ...defaultOptions,
+      cache: "no-store",
+    }
+  );
   return res.json();
 };
 
@@ -74,11 +75,14 @@ export const completeTask = async (id) => {
    VOLUNTEER APIs
 ========================= */
 
-export const getOpenTasks = async () => {
-  const res = await fetch(`${API_URL}/tasks`, {
-    ...defaultOptions,
-    cache: "no-store",
-  });
+export const getOpenTasks = async (page = 1, limit = 8) => {
+  const res = await fetch(
+    `${API_URL}/tasks?page=${page}&limit=${limit}`,
+    {
+      ...defaultOptions,
+      cache: "no-store",
+    }
+  );
   return res.json();
 };
 
@@ -90,11 +94,14 @@ export const acceptTask = async (id) => {
   return res.json();
 };
 
-export const getVolunteerTasks = async () => {
-  const res = await fetch(`${API_URL}/tasks/volunteer`, {
-    ...defaultOptions,
-    cache: "no-store",
-  });
+export const getVolunteerTasks = async (page = 1, limit = 8) => {
+  const res = await fetch(
+    `${API_URL}/tasks/volunteer?page=${page}&limit=${limit}`,
+    {
+      ...defaultOptions,
+      cache: "no-store",
+    }
+  );
   return res.json();
 };
 
@@ -123,9 +130,17 @@ export const getTaskById = async (id) => {
   const res = await fetch(`${API_URL}/tasks/${id}`, {
     ...defaultOptions,
     method: "GET",
-    cache: "no-store", // 🔥 prevents stale cache
+    cache: "no-store",
   });
+  return res.json();
+};
 
+export const rateTask = async (id, rating, review) => {
+  const res = await fetch(`${API_URL}/tasks/${id}/rate`, {
+    ...defaultOptions,
+    method: "PUT",
+    body: JSON.stringify({ rating, review }),
+  });
   return res.json();
 };
 
@@ -141,11 +156,14 @@ export const getAdminStats = async () => {
   return res.json();
 };
 
-export const getAllUsers = async () => {
-  const res = await fetch(`${API_URL}/admin/users`, {
-    ...defaultOptions,
-    cache: "no-store",
-  });
+export const getAllUsers = async (page = 1, limit = 8) => {
+  const res = await fetch(
+    `${API_URL}/admin/users?page=${page}&limit=${limit}`,
+    {
+      ...defaultOptions,
+      cache: "no-store",
+    }
+  );
   return res.json();
 };
 
@@ -157,20 +175,14 @@ export const unblockUser = async (id) => {
   return res.json();
 };
 
-export const getAllTasksAdmin = async () => {
-  const res = await fetch(`${API_URL}/admin/tasks`, {
-    ...defaultOptions,
-    cache: "no-store",
-  });
-  return res.json();
-};
-
-export const rateTask = async (id, rating, review) => {
-  const res = await fetch(`${API_URL}/tasks/${id}/rate`, {
-    ...defaultOptions,
-    method: "PUT",
-    body: JSON.stringify({ rating, review }),
-  });
+export const getAllTasksAdmin = async (page = 1, limit = 8) => {
+  const res = await fetch(
+    `${API_URL}/admin/tasks?page=${page}&limit=${limit}`,
+    {
+      ...defaultOptions,
+      cache: "no-store",
+    }
+  );
   return res.json();
 };
 
@@ -201,7 +213,7 @@ export const uploadChatFile = async (file) => {
 
   const res = await fetch(`${API_URL}/chat/upload`, {
     method: "POST",
-    credentials: "include", // 🔥 must stay
+    credentials: "include",
     body: formData,
   });
 

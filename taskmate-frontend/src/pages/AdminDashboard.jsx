@@ -6,6 +6,8 @@ import {
   getAllTasksAdmin,
 } from "../api/api";
 
+import Pagination from "../components/Pagination";
+
 import {
   BarChart,
   Bar,
@@ -29,18 +31,39 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [tasks, setTasks] = useState([]);
 
+  /* ================= PAGINATION STATES ================= */
+
+  // Users Pagination
+  const [userPage, setUserPage] = useState(1);
+  const [userLimit, setUserLimit] = useState(8);
+  const [userTotal, setUserTotal] = useState(0);
+  const [userTotalPages, setUserTotalPages] = useState(1);
+
+  // Tasks Pagination (for analytics dataset)
+  const [taskPage, setTaskPage] = useState(1);
+  const [taskLimit, setTaskLimit] = useState(8);
+  const [taskTotal, setTaskTotal] = useState(0);
+  const [taskTotalPages, setTaskTotalPages] = useState(1);
+
   useEffect(() => {
     loadData();
-  }, []);
+  }, [userPage, userLimit, taskPage, taskLimit]);
 
   const loadData = async () => {
     const statsData = await getAdminStats();
-    const usersData = await getAllUsers();
-    const tasksData = await getAllTasksAdmin();
+
+    const usersData = await getAllUsers(userPage, userLimit);
+    const tasksData = await getAllTasksAdmin(taskPage, taskLimit);
 
     setStats(statsData || {});
-    setUsers(usersData || []);
-    setTasks(tasksData || []);
+
+    setUsers(usersData?.data || []);
+    setUserTotal(usersData?.total || 0);
+    setUserTotalPages(usersData?.totalPages || 1);
+
+    setTasks(tasksData?.data || []);
+    setTaskTotal(tasksData?.total || 0);
+    setTaskTotalPages(tasksData?.totalPages || 1);
   };
 
   const handleUnblock = async (id) => {
@@ -64,11 +87,7 @@ export default function AdminDashboard() {
       method: "PUT",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        reason,
-        days,
-        permanent,
-      }),
+      body: JSON.stringify({ reason, days, permanent }),
     });
 
     loadData();
@@ -119,12 +138,12 @@ export default function AdminDashboard() {
       <div className="admin-stats">
         <div className="stat-box">
           <h3>Total Users</h3>
-          <p>{stats.totalUsers || users.length}</p>
+          <p>{stats.totalUsers || userTotal}</p>
         </div>
 
         <div className="stat-box">
           <h3>Total Tasks</h3>
-          <p>{stats.totalTasks || tasks.length}</p>
+          <p>{stats.totalTasks || taskTotal}</p>
         </div>
 
         <div className="stat-box">
@@ -190,6 +209,7 @@ export default function AdminDashboard() {
 
       {/* ================= USERS TABLE ================= */}
       <h2>All Users</h2>
+
       <div className="table-wrapper">
         <table className="admin-table">
           <thead>
@@ -230,7 +250,6 @@ export default function AdminDashboard() {
                   </span>
                 </td>
 
-                {/* Ban Info */}
                 <td>
                   {user.isBlocked && (
                     <>
@@ -249,7 +268,6 @@ export default function AdminDashboard() {
                   )}
                 </td>
 
-                {/* Unblock Request */}
                 <td>
                   {user.unblockRequested && (
                     <>
@@ -308,6 +326,16 @@ export default function AdminDashboard() {
           </tbody>
         </table>
       </div>
+
+      {/* 🔥 USERS PAGINATION */}
+      <Pagination
+        page={userPage}
+        totalPages={userTotalPages}
+        total={userTotal}
+        limit={userLimit}
+        setPage={setUserPage}
+        setLimit={setUserLimit}
+      />
     </div>
   );
 }

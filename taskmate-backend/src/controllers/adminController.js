@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import Task from "../models/Task.js";
-import { sendEmail } from "../utils/emailService.js"; // ✅ EMAIL IMPORT
+import { sendEmail } from "../utils/emailService.js";
+import { paginate } from "../utils/paginate.js";
 
 /* =====================================
    BAN USER (TEMPORARY OR PERMANENT)
@@ -42,7 +43,6 @@ export const banUser = async (req, res) => {
 
     await user.save();
 
-    /* ✅ EMAIL TO USER */
     await sendEmail({
       to: user.email,
       subject: "Account Blocked — TaskMate",
@@ -70,23 +70,17 @@ export const banUser = async (req, res) => {
 export const unblockUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     user.isBlocked = false;
     user.isPermanentlyBlocked = false;
     user.banUntil = null;
     user.banReason = "";
-
-    // 🔥 VERY IMPORTANT
     user.unblockRequested = false;
     user.unblockMessage = "";
 
     await user.save();
 
-    /* ✅ EMAIL TO USER */
     await sendEmail({
       to: user.email,
       subject: "Account Unblocked — TaskMate",
@@ -105,23 +99,50 @@ export const unblockUser = async (req, res) => {
 };
 
 /* =====================================
-   GET ALL USERS
+   GET ALL USERS (PAGINATED)
 ===================================== */
 export const getAllUsers = async (req, res) => {
-  const users = await User.find().select("-password");
-  res.json(users);
+  try {
+    const { page = 1, limit = 8 } = req.query;
+
+    const result = await paginate(
+      User,
+      {},
+      page,
+      limit,
+      null,
+      { createdAt: -1 },
+      "-password"
+    );
+
+    res.json(result);
+  } catch (error) {
+    console.error("Get users error:", error);
+    res.status(500).json({ message: "Failed to fetch users" });
+  }
 };
 
 /* =====================================
-   GET ALL TASKS
+   GET ALL TASKS (PAGINATED)
 ===================================== */
 export const getAllTasks = async (req, res) => {
-  const tasks = await Task.find()
-    .populate("client", "name email")
-    .populate("volunteer", "name email")
-    .sort({ createdAt: -1 });
+  try {
+    const { page = 1, limit = 8 } = req.query;
 
-  res.json(tasks);
+    const result = await paginate(
+      Task,
+      {},
+      page,
+      limit,
+      "client volunteer",
+      { createdAt: -1 }
+    );
+
+    res.json(result);
+  } catch (error) {
+    console.error("Get tasks error:", error);
+    res.status(500).json({ message: "Failed to fetch tasks" });
+  }
 };
 
 /* =====================================
@@ -162,6 +183,7 @@ export const getAdminStats = async (req, res) => {
       tasksPerDay,
     });
   } catch (error) {
+    console.error("Analytics error:", error);
     res.status(500).json({ message: "Failed to fetch analytics" });
   }
 };

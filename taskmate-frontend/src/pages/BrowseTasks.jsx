@@ -2,10 +2,18 @@ import { useEffect, useState } from "react";
 import { getOpenTasks, acceptTask } from "../api/api";
 import { getUser } from "../utils/auth";
 import { useNavigate, Link } from "react-router-dom";
+import Pagination from "../components/Pagination";
 
 export default function BrowseTasks() {
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState("");
+
+  // 🔥 Pagination States
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
   const user = getUser();
   const navigate = useNavigate();
 
@@ -16,14 +24,16 @@ export default function BrowseTasks() {
     }
 
     loadTasks();
-  }, []);
+  }, [page, limit]);
 
   const loadTasks = async () => {
     try {
-      const data = await getOpenTasks();
+      const data = await getOpenTasks(page, limit);
 
-      if (Array.isArray(data)) {
-        setTasks(data);
+      if (data?.data) {
+        setTasks(data.data);
+        setTotal(data.total || 0);
+        setTotalPages(data.totalPages || 1);
       } else {
         setError(data.message || "Failed to load tasks");
       }
@@ -54,8 +64,7 @@ export default function BrowseTasks() {
       <div className="task-list">
         {tasks.map((task) => (
           <div className="task-card" key={task._id}>
-            
-            {/* ✅ CLICKABLE TITLE → TASK DETAIL PAGE */}
+            {/* ✅ CLICKABLE TITLE */}
             <h3>
               <Link to={`/task/${task._id}`} className="task-link">
                 {task.title}
@@ -78,7 +87,6 @@ export default function BrowseTasks() {
                 Accept Task
               </button>
 
-              {/* Optional View Button */}
               <button
                 className="btn secondary"
                 onClick={() => navigate(`/task/${task._id}`)}
@@ -86,10 +94,21 @@ export default function BrowseTasks() {
                 View Details
               </button>
             </div>
-
           </div>
         ))}
       </div>
+
+      {/* 🔥 PAGINATION COMPONENT */}
+      {!error && total > 0 && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          limit={limit}
+          setPage={setPage}
+          setLimit={setLimit}
+        />
+      )}
     </div>
   );
 }

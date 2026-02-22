@@ -5,15 +5,25 @@ import {
   submitTask,
   requestUnblock,
 } from "../api/api";
+import Pagination from "../components/Pagination";
 
 export default function VolunteerDashboard() {
   const [tasks, setTasks] = useState([]);
   const [user, setUser] = useState(null);
 
+  // 🔥 Pagination States
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
-    loadTasks();
     fetchUser();
   }, []);
+
+  useEffect(() => {
+    loadTasks();
+  }, [page, limit]);
 
   const fetchUser = async () => {
     try {
@@ -28,9 +38,19 @@ export default function VolunteerDashboard() {
   };
 
   const loadTasks = async () => {
-    const data = await getVolunteerTasks();
-    if (Array.isArray(data)) setTasks(data);
-    else setTasks([]);
+    try {
+      const data = await getVolunteerTasks(page, limit);
+
+      if (data?.data) {
+        setTasks(data.data);
+        setTotal(data.total || 0);
+        setTotalPages(data.totalPages || 1);
+      } else {
+        setTasks([]);
+      }
+    } catch {
+      setTasks([]);
+    }
   };
 
   const handleSubmit = async (id) => {
@@ -136,6 +156,18 @@ export default function VolunteerDashboard() {
           </div>
         ))}
       </div>
+
+      {/* 🔥 PAGINATION */}
+      {total > 0 && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          limit={limit}
+          setPage={setPage}
+          setLimit={setLimit}
+        />
+      )}
     </div>
   );
 }

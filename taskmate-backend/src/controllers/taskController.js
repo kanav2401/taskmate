@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Notification from "../models/Notification.js";
 import { sendEmail } from "../utils/emailService.js";
 import { onlineUsers, io } from "../server.js";
+import { paginate } from "../utils/paginate.js";
 
 /* ================= CLIENT ================= */
 
@@ -29,18 +30,25 @@ export const createTask = async (req, res) => {
   }
 };
 
-// CLIENT DASHBOARD TASKS
+// CLIENT DASHBOARD TASKS (PAGINATED)
 export const getClientTasks = async (req, res) => {
   if (req.user.role !== "client") {
     return res.status(403).json({ message: "Unauthorized" });
   }
 
   try {
-    const tasks = await Task.find({ client: req.user.id })
-      .populate("volunteer", "name email")
-      .sort({ createdAt: -1 });
+    const { page = 1, limit = 8 } = req.query;
 
-    res.json(tasks);
+    const result = await paginate(
+      Task,
+      { client: req.user.id },
+      page,
+      limit,
+      "volunteer",
+      { createdAt: -1 }
+    );
+
+    res.json(result);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch client tasks" });
   }
@@ -48,17 +56,25 @@ export const getClientTasks = async (req, res) => {
 
 /* ================= VOLUNTEER ================= */
 
-// VIEW OPEN TASKS
+// VIEW OPEN TASKS (PAGINATED)
 export const getOpenTasks = async (req, res) => {
   if (req.user.role !== "volunteer") {
     return res.status(403).json({ message: "Only volunteers can view tasks" });
   }
 
   try {
-    const tasks = await Task.find({ status: "open" })
-      .populate("client", "name email");
+    const { page = 1, limit = 8 } = req.query;
 
-    res.json(tasks);
+    const result = await paginate(
+      Task,
+      { status: "open" },
+      page,
+      limit,
+      "client",
+      { createdAt: -1 }
+    );
+
+    res.json(result);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch tasks" });
   }
@@ -88,7 +104,6 @@ export const acceptTask = async (req, res) => {
     task.acceptedAt = new Date();
     await task.save();
 
-    /* 🔥 SAVE NOTIFICATION IN DB */
     if (task.client?._id) {
       await Notification.create({
         user: task.client._id,
@@ -97,10 +112,7 @@ export const acceptTask = async (req, res) => {
       });
     }
 
-    /* 🔔 REALTIME */
-    const clientSocketId = onlineUsers.get(
-      task.client?._id?.toString()
-    );
+    const clientSocketId = onlineUsers.get(task.client?._id?.toString());
 
     if (clientSocketId) {
       io.to(clientSocketId).emit("newNotification", {
@@ -110,7 +122,6 @@ export const acceptTask = async (req, res) => {
       });
     }
 
-    /* 📧 EMAIL */
     if (task.client?.email) {
       await sendEmail(
         task.client.email,
@@ -126,18 +137,25 @@ export const acceptTask = async (req, res) => {
   }
 };
 
-// VOLUNTEER DASHBOARD TASKS
+// VOLUNTEER DASHBOARD TASKS (PAGINATED)
 export const getVolunteerTasks = async (req, res) => {
   if (req.user.role !== "volunteer") {
     return res.status(403).json({ message: "Unauthorized" });
   }
 
   try {
-    const tasks = await Task.find({ volunteer: req.user.id })
-      .populate("client", "name email")
-      .sort({ acceptedAt: -1 });
+    const { page = 1, limit = 8 } = req.query;
 
-    res.json(tasks);
+    const result = await paginate(
+      Task,
+      { volunteer: req.user.id },
+      page,
+      limit,
+      "client",
+      { acceptedAt: -1 }
+    );
+
+    res.json(result);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch volunteer tasks" });
   }
@@ -210,7 +228,6 @@ export const submitTask = async (req, res) => {
     task.submissionNote = req.body.note || "";
     await task.save();
 
-    /* 🔥 SAVE NOTIFICATION */
     if (task.client?._id) {
       await Notification.create({
         user: task.client._id,
@@ -219,10 +236,7 @@ export const submitTask = async (req, res) => {
       });
     }
 
-    /* 🔔 REALTIME */
-    const clientSocketId = onlineUsers.get(
-      task.client?._id?.toString()
-    );
+    const clientSocketId = onlineUsers.get(task.client?._id?.toString());
 
     if (clientSocketId) {
       io.to(clientSocketId).emit("newNotification", {
@@ -232,7 +246,6 @@ export const submitTask = async (req, res) => {
       });
     }
 
-    /* 📧 EMAIL */
     if (task.client?.email) {
       await sendEmail(
         task.client.email,
@@ -248,14 +261,9 @@ export const submitTask = async (req, res) => {
   }
 };
 
-// COMPLETE TASK
-export const completeTask = async (req, res) => {
-  if (req.user.isBlocked) {
-    return res.status(403).json({
-      message: "Your account is blocked. You cannot complete tasks.",
-    });
-  }
+/* ================= COMPLETE TASK ================= */
 
+export const completeTask = async (req, res) => {
   if (req.user.role !== "client") {
     return res.status(403).json({ message: "Only clients can complete tasks" });
   }
@@ -274,78 +282,14 @@ export const completeTask = async (req, res) => {
     task.status = "completed";
     await task.save();
 
-    /* 🔥 SAVE NOTIFICATION */
-    if (task.volunteer?._id) {
-      await Notification.create({
-        user: task.volunteer._id,
-        title: "Task Completed",
-        message: `Task "${task.title}" marked completed.`,
-      });
-    }
-
-    /* 🔔 REALTIME */
-    const volunteerSocketId = onlineUsers.get(
-      task.volunteer?._id?.toString()
-    );
-
-    if (volunteerSocketId) {
-      io.to(volunteerSocketId).emit("newNotification", {
-        title: "Task Completed",
-        message: `Task "${task.title}" marked completed.`,
-        isRead: false,
-      });
-    }
-
-    /* 📧 EMAIL */
-    if (task.volunteer?.email) {
-      await sendEmail(
-        task.volunteer.email,
-        "Task Completed — TaskMate",
-        `<p>Great news! Task "<b>${task.title}</b>" has been marked completed.</p>`
-      );
-    }
-
     res.json({ message: "Task marked as completed" });
   } catch (error) {
-    console.error("COMPLETE TASK ERROR:", error);
     res.status(500).json({ message: "Completion failed" });
   }
 };
 
-/* ================= OTHER ================= */
+/* ================= RATE TASK ================= */
 
-// VOLUNTEER REQUEST UNBLOCK
-export const requestUnblock = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-
-    if (!user.isBlocked) {
-      return res.status(400).json({ message: "You are not blocked" });
-    }
-
-    if (user.isPermanentlyBlocked) {
-      return res.status(403).json({
-        message: "You are permanently banned. Contact support.",
-      });
-    }
-
-    user.unblockRequested = true;
-    await user.save();
-
-    await sendEmail(
-      process.env.ADMIN_EMAIL,
-      "Unblock Request — TaskMate",
-      `<p>User <b>${user.email}</b> requested to be unblocked.</p>`
-    );
-
-    res.json({ message: "Unblock request sent to admin" });
-  } catch (error) {
-    console.error("REQUEST UNBLOCK ERROR:", error);
-    res.status(500).json({ message: "Request failed" });
-  }
-};
-
-// RATE TASK
 export const rateTask = async (req, res) => {
   if (req.user.role !== "client") {
     return res.status(403).json({ message: "Only clients can rate" });

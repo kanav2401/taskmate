@@ -4,7 +4,7 @@ import Notification from "../models/Notification.js";
 import { sendEmail } from "../utils/emailService.js";
 import { onlineUsers, io } from "../server.js";
 import { paginate } from "../utils/paginate.js";
-
+import Transaction from "../models/Transaction.js";
 /* ================= CLIENT ================= */
 
 // CREATE TASK
@@ -281,11 +281,84 @@ export const completeTask = async (req, res) => {
 
     task.status = "completed";
     await task.save();
+if (task.paymentStatus === "funded") {
+  const volunteer = await User.findById(task.volunteer);
 
+  volunteer.walletBalance += task.budget;
+  await volunteer.save();
+
+  task.paymentStatus = "released";
+  await task.save();
+
+  await Transaction.create({
+    user: volunteer._id,
+    task: task._id,
+    type: "release",
+    amount: task.budget,
+  });
+}
     res.json({ message: "Task marked as completed" });
   } catch (error) {
     res.status(500).json({ message: "Completion failed" });
   }
+};
+/* ================= TRANSACTION ================= */
+export const fundTask = async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+
+    if (!task) return res.status(404).json({ message: "Task not found" });
+
+    if (task.client.toString() !== req.user.id)
+      return res.status(403).json({ message: "Unauthorized" });
+
+    if (task.paymentStatus === "funded")
+      return res.status(400).json({ message: "Already funded" });
+
+    task.paymentStatus = "funded";
+    await task.save();
+
+    await Transaction.create({
+      user: req.user.id,
+      task: task._id,
+      type: "fund",
+      amount: task.budget,
+    });
+
+    res.json({ message: "Task funded successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Funding failed" });
+  }
+};
+export const withdrawFunds = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (user.walletBalance <= 0)
+      return res.status(400).json({ message: "No funds available" });
+
+    const amount = user.walletBalance;
+
+    user.walletBalance = 0;
+    await user.save();
+
+    await Transaction.create({
+      user: user._id,
+      type: "withdraw",
+      amount,
+    });
+
+    res.json({ message: "Withdrawal successful" });
+  } catch (err) {
+    res.status(500).json({ message: "Withdrawal failed" });
+  }
+};
+export const getMyTransactions = async (req, res) => {
+  const transactions = await Transaction.find({ user: req.user.id })
+    .populate("task", "title")
+    .sort({ createdAt: -1 });
+
+  res.json(transactions);
 };
 
 /* ================= RATE TASK ================= */

@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    walletBalance: {
+  type: Number,
+  default: 0,
+},
 
     banUntil: {
       type: Date,

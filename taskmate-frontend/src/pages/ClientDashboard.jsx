@@ -3,6 +3,7 @@ import {
   getClientTasks,
   completeTask,
   rateTask,
+  fundTask,
 } from "../api/api";
 import StarRating from "../components/StarRating";
 import Pagination from "../components/Pagination";
@@ -54,7 +55,11 @@ export default function ClientDashboard() {
       console.error("Complete failed");
     }
   };
-
+const handleFund = async (id) => {
+  const res = await fundTask(id);
+  alert(res.message);
+  loadTasks();
+};
   /* ================= SUBMIT RATING ================= */
   const handleRatingSubmit = async (taskId) => {
     const rating = ratings[taskId];
@@ -129,7 +134,14 @@ export default function ClientDashboard() {
                     ✅ Mark as Complete
                   </button>
                 )}
-
+                  {task.paymentStatus === "pending" && (
+  <button
+    className="btn-primary modern-btn"
+    onClick={() => handleFund(task._id)}
+  >
+    💰 Fund Task
+  </button>
+)}
                 {/* RATING UI */}
                 {task.status === "completed" && !task.rating && (
                   <div className="rating-box-modern">

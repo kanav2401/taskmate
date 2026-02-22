@@ -11,7 +11,11 @@ import {
   submitTask,
   completeTask,
   rateTask,
+  fundTask, 
+  withdrawFunds,        // 👈 ADD THIS
+  getMyTransactions,           // 👈 ADD THIS
 } from "../controllers/taskController.js";
+import Transaction from "../models/Transaction.js";
 
 const router = express.Router();
 
@@ -48,5 +52,9 @@ router.put("/:id/rate", authMiddleware, rateTask);
 /* ================= TASK DETAIL (KEEP LAST) ================= */
 
 router.get("/:id", authMiddleware, getTaskById);
+
+router.put("/:id/fund", authMiddleware, fundTask);
+router.put("/wallet/withdraw", authMiddleware, withdrawFunds);
+router.get("/wallet/transactions", authMiddleware, getMyTransactions);
 
 export default router;

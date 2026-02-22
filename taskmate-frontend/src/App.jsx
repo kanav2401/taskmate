@@ -21,7 +21,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminRoute from "./components/AdminRoute";
 import Layout from "./components/Layout";
 import ComplaintCenter from "./pages/ComplaintCenter";
-
+import WalletPage from "./pages/WalletPage";
 
 
 
@@ -117,7 +117,7 @@ function App() {
     </ProtectedRoute>
   }
 />
-
+<Route path="/wallet" element={<WalletPage />} />
 
 
         </Routes>

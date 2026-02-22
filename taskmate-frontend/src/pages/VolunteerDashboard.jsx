@@ -77,21 +77,31 @@ export default function VolunteerDashboard() {
     <div className="volunteer-dashboard-modern">
 
       {/* HEADER WITH RATING */}
-      <div className="volunteer-header-card">
-        <div>
-          <h1>Welcome, {user?.name}</h1>
-          <p className="role-text">Volunteer Account</p>
-        </div>
+      {/* HEADER WITH RATING */}
+<div className="volunteer-header-card">
+  <div>
+    <h1>Welcome, {user?.name}</h1>
+    <p className="role-text">Volunteer Account</p>
 
-        <div className="rating-summary-box">
-          <div className="rating-stars-large">
-            ⭐ {user?.averageRating?.toFixed(1) || "0.0"}
-          </div>
-          <div className="rating-count">
-            {user?.totalRatings || 0} Reviews
-          </div>
-        </div>
-      </div>
+    {/* 💰 WALLET BUTTON */}
+    <div style={{ marginTop: "10px" }}>
+      <Link to="/wallet">
+        <button className="btn-primary modern-btn">
+  💰 My Wallet
+</button>
+      </Link>
+    </div>
+  </div>
+
+  <div className="rating-summary-box">
+    <div className="rating-stars-large">
+      ⭐ {user?.averageRating?.toFixed(1) || "0.0"}
+    </div>
+    <div className="rating-count">
+      {user?.totalRatings || 0} Reviews
+    </div>
+  </div>
+</div>
 
       {/* BLOCKED MESSAGE */}
       {user?.isBlocked && !user?.isPermanentlyBlocked && (

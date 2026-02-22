@@ -55,7 +55,11 @@ review: {
   type: String,
   default: "",
 },
-
+paymentStatus: {
+  type: String,
+  enum: ["pending", "funded", "released", "refunded"],
+  default: "pending",
+},
   },
   { timestamps: true }
   

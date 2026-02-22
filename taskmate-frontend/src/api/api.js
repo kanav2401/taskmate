@@ -186,6 +186,32 @@ export const getAllTasksAdmin = async (page = 1, limit = 8) => {
   return res.json();
 };
 
+// ================= WALLET & ESCROW =================
+
+export const fundTask = async (id) => {
+  const res = await fetch(`${API_URL}/tasks/${id}/fund`, {
+    ...defaultOptions,
+    method: "PUT",
+  });
+  return res.json();
+};
+
+export const withdrawFunds = async () => {
+  const res = await fetch(`${API_URL}/tasks/wallet/withdraw`, {
+    ...defaultOptions,
+    method: "PUT",
+  });
+  return res.json();
+};
+
+export const getTransactions = async () => {
+  const res = await fetch(`${API_URL}/tasks/wallet/transactions`, {
+    credentials: "include",
+  });
+
+  return res.json();
+};
+
 /* =========================
    CHAT APIs
 ========================= */
@@ -217,5 +243,7 @@ export const uploadChatFile = async (file) => {
     body: formData,
   });
 
+
+  
   return res.json();
 };

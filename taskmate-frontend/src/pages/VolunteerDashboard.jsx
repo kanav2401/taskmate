@@ -54,12 +54,28 @@ export default function VolunteerDashboard() {
   };
 
   return (
-    <div className="dashboard">
-      <h1>Volunteer Dashboard</h1>
+    <div className="volunteer-dashboard-modern">
+
+      {/* HEADER WITH RATING */}
+      <div className="volunteer-header-card">
+        <div>
+          <h1>Welcome, {user?.name}</h1>
+          <p className="role-text">Volunteer Account</p>
+        </div>
+
+        <div className="rating-summary-box">
+          <div className="rating-stars-large">
+            ⭐ {user?.averageRating?.toFixed(1) || "0.0"}
+          </div>
+          <div className="rating-count">
+            {user?.totalRatings || 0} Reviews
+          </div>
+        </div>
+      </div>
 
       {/* BLOCKED MESSAGE */}
       {user?.isBlocked && !user?.isPermanentlyBlocked && (
-        <div className="blocked-box">
+        <div className="blocked-box-modern">
           <h3>⚠ Account Temporarily Blocked</h3>
           <p>You missed a deadline. You can request admin to unblock you.</p>
           <button className="btn warning-btn" onClick={handleRequestUnblock}>
@@ -70,26 +86,30 @@ export default function VolunteerDashboard() {
 
       {/* PERMANENT BAN */}
       {user?.isPermanentlyBlocked && (
-        <div className="blocked-box permanent">
+        <div className="blocked-box-modern permanent">
           <h3>⛔ Permanently Banned</h3>
           <p>You have crossed the 3-strike limit. Please contact support.</p>
         </div>
       )}
 
-      {tasks.length === 0 && <p>No accepted tasks yet.</p>}
+      {tasks.length === 0 && (
+        <p className="empty-text-modern">No accepted tasks yet.</p>
+      )}
 
-      <div className="task-list">
+      <div className="task-grid-modern">
         {tasks.map((task) => (
-          <div className="task-card" key={task._id}>
+          <div className="task-card-modern" key={task._id}>
             <h3>{task.title}</h3>
             <p>{task.description}</p>
 
             <p>
               <strong>Client:</strong> {task.client?.name}
             </p>
+
             <p>
               <strong>Budget:</strong> ₹{task.budget}
             </p>
+
             <p>
               <strong>Deadline:</strong>{" "}
               {new Date(task.deadline).toDateString()}
@@ -97,7 +117,6 @@ export default function VolunteerDashboard() {
 
             {getStatusBadge(task.status)}
 
-            {/* 🔥 NEW: VIEW DETAILS BUTTON */}
             <Link
               to={`/task/${task._id}`}
               className="btn"

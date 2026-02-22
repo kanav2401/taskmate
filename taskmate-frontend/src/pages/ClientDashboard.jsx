@@ -65,25 +65,47 @@ export default function ClientDashboard() {
   if (loading) return <p className="loading-text">Loading tasks...</p>;
 
   return (
-    <div className="dashboard-container">
-      <h2 className="dashboard-title">📋 Client Dashboard</h2>
+    <div className="dashboard-container-modern">
+      <h2 className="dashboard-title-modern">
+        📋 Client Dashboard
+      </h2>
 
       {tasks.length === 0 ? (
-        <p className="empty-text">No tasks yet</p>
+        <p className="empty-text-modern">No tasks yet</p>
       ) : (
-        <div className="task-grid">
+        <div className="task-grid-modern">
           {tasks.map((task) => (
-            <div key={task._id} className="task-card-modern">
-              <div className="task-header">
+            <div key={task._id} className="task-card-premium">
+
+              {/* HEADER */}
+              <div className="task-header-modern">
                 <h3>{task.title}</h3>
-                <span className={`status-badge status-${task.status}`}>
+                <span className={`status-badge-modern status-${task.status}`}>
                   {task.status}
                 </span>
               </div>
 
-              <p className="task-desc">{task.description}</p>
+              <p className="task-desc-modern">
+                {task.description}
+              </p>
 
-              {/* ✅ COMPLETE BUTTON (RESTORED) */}
+              {/* VOLUNTEER INFO */}
+              {task.volunteer && (
+                <div className="volunteer-info-box">
+                  <div>
+                    👤 <strong>{task.volunteer.name}</strong>
+                  </div>
+
+                  <div className="rating-badge">
+                    ⭐ {task.volunteer.averageRating?.toFixed(1) || "0.0"} 
+                    <span className="rating-count">
+                      ({task.volunteer.totalRatings || 0})
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* COMPLETE BUTTON */}
               {task.status === "submitted" && (
                 <button
                   className="btn-primary modern-btn"
@@ -93,7 +115,7 @@ export default function ClientDashboard() {
                 </button>
               )}
 
-              {/* ⭐ RATING UI */}
+              {/* RATING UI */}
               {task.status === "completed" && !task.rating && (
                 <div className="rating-box-modern">
                   <h4>⭐ Rate Volunteer</h4>
@@ -117,6 +139,7 @@ export default function ClientDashboard() {
                         [task._id]: e.target.value,
                       }))
                     }
+                    className="review-textarea-modern"
                   />
 
                   <button
@@ -128,12 +151,13 @@ export default function ClientDashboard() {
                 </div>
               )}
 
-              {/* ✅ Already rated */}
+              {/* ALREADY RATED */}
               {task.rating && (
-                <div className="already-rated-box">
+                <div className="already-rated-box-modern">
                   ⭐ You rated this volunteer {task.rating}/5
                 </div>
               )}
+
             </div>
           ))}
         </div>

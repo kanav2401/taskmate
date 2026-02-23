@@ -5,16 +5,19 @@ import {
   rateTask,
   fundTask,
 } from "../api/api";
+
 import StarRating from "../components/StarRating";
 import Pagination from "../components/Pagination";
+import ChatPanel from "../components/ChatPanel";
 
 export default function ClientDashboard() {
   const [tasks, setTasks] = useState([]);
   const [ratings, setRatings] = useState({});
   const [reviews, setReviews] = useState({});
   const [loading, setLoading] = useState(true);
+  const [activeChat, setActiveChat] = useState(null);
 
-  // 🔥 Pagination States
+  // Pagination
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const [total, setTotal] = useState(0);
@@ -42,25 +45,23 @@ export default function ClientDashboard() {
     }
   };
 
-  /* ================= COMPLETE TASK ================= */
   const handleComplete = async (taskId) => {
     if (!window.confirm("Mark this task as completed?")) return;
 
     try {
       const res = await completeTask(taskId);
-      if (res?.message) {
-        loadTasks();
-      }
+      if (res?.message) loadTasks();
     } catch (err) {
       console.error("Complete failed");
     }
   };
-const handleFund = async (id) => {
-  const res = await fundTask(id);
-  alert(res.message);
-  loadTasks();
-};
-  /* ================= SUBMIT RATING ================= */
+
+  const handleFund = async (id) => {
+    const res = await fundTask(id);
+    alert(res.message);
+    loadTasks();
+  };
+
   const handleRatingSubmit = async (taskId) => {
     const rating = ratings[taskId];
     const review = reviews[taskId] || "";
@@ -85,9 +86,7 @@ const handleFund = async (id) => {
 
   return (
     <div className="dashboard-container-modern">
-      <h2 className="dashboard-title-modern">
-        📋 Client Dashboard
-      </h2>
+      <h2 className="dashboard-title-modern">📋 Client Dashboard</h2>
 
       {tasks.length === 0 ? (
         <p className="empty-text-modern">No tasks yet</p>
@@ -96,20 +95,18 @@ const handleFund = async (id) => {
           <div className="task-grid-modern">
             {tasks.map((task) => (
               <div key={task._id} className="task-card-premium">
-
-                {/* HEADER */}
                 <div className="task-header-modern">
                   <h3>{task.title}</h3>
-                  <span className={`status-badge-modern status-${task.status}`}>
+                  <span
+                    className={`status-badge-modern status-${task.status}`}
+                  >
                     {task.status}
                   </span>
                 </div>
 
-                <p className="task-desc-modern">
-                  {task.description}
-                </p>
+                <p className="task-desc-modern">{task.description}</p>
 
-                {/* VOLUNTEER INFO */}
+                {/* Volunteer Info */}
                 {task.volunteer && (
                   <div className="volunteer-info-box">
                     <div>
@@ -117,7 +114,8 @@ const handleFund = async (id) => {
                     </div>
 
                     <div className="rating-badge">
-                      ⭐ {task.volunteer.averageRating?.toFixed(1) || "0.0"} 
+                      ⭐{" "}
+                      {task.volunteer.averageRating?.toFixed(1) || "0.0"}
                       <span className="rating-count">
                         ({task.volunteer.totalRatings || 0})
                       </span>
@@ -125,7 +123,28 @@ const handleFund = async (id) => {
                   </div>
                 )}
 
-                {/* COMPLETE BUTTON */}
+                {/* Chat Button */}
+                {task.volunteer && (
+                  <button
+                    className="btn-primary modern-btn"
+                    style={{ marginTop: "10px" }}
+                    onClick={() => setActiveChat(task._id)}
+                  >
+                    💬 Chat with Volunteer
+                  </button>
+                )}
+
+                {/* Fund Button */}
+                {task.paymentStatus === "pending" && (
+                  <button
+                    className="btn-primary modern-btn"
+                    onClick={() => handleFund(task._id)}
+                  >
+                    💰 Fund Task
+                  </button>
+                )}
+
+                {/* Complete Button */}
                 {task.status === "submitted" && (
                   <button
                     className="btn-primary modern-btn"
@@ -134,15 +153,8 @@ const handleFund = async (id) => {
                     ✅ Mark as Complete
                   </button>
                 )}
-                  {task.paymentStatus === "pending" && (
-  <button
-    className="btn-primary modern-btn"
-    onClick={() => handleFund(task._id)}
-  >
-    💰 Fund Task
-  </button>
-)}
-                {/* RATING UI */}
+
+                {/* Rating */}
                 {task.status === "completed" && !task.rating && (
                   <div className="rating-box-modern">
                     <h4>⭐ Rate Volunteer</h4>
@@ -178,18 +190,15 @@ const handleFund = async (id) => {
                   </div>
                 )}
 
-                {/* ALREADY RATED */}
                 {task.rating && (
                   <div className="already-rated-box-modern">
                     ⭐ You rated this volunteer {task.rating}/5
                   </div>
                 )}
-
               </div>
             ))}
           </div>
 
-          {/* 🔥 PAGINATION */}
           <Pagination
             page={page}
             totalPages={totalPages}
@@ -199,6 +208,14 @@ const handleFund = async (id) => {
             setLimit={setLimit}
           />
         </>
+      )}
+
+      {/* Chat Panel */}
+      {activeChat && (
+        <ChatPanel
+          taskId={activeChat}
+          onClose={() => setActiveChat(null)}
+        />
       )}
     </div>
   );

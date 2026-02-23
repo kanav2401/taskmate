@@ -38,8 +38,10 @@ router.get("/:taskId", authMiddleware, async (req, res) => {
     );
 
     const messages = await Message.find({
-      task: req.params.taskId,
-    }).sort({ createdAt: 1 });
+  task: req.params.taskId,
+})
+.populate("sender", "name email")
+.sort({ createdAt: 1 });
 
     res.json(messages);
   } catch (error) {

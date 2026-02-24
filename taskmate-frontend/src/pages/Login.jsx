@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../api/api";
 import { setUser } from "../utils/auth";
+import "./Auth.css";
 
 export default function Login() {
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+
+  const [message,setMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -19,56 +23,101 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
 
     const res = await loginUser(form);
 
     if (res.user) {
-      // ✅ Save only user (NO TOKEN)
+
+      // ✅ Save user (cookie auth system)
       setUser(res.user);
 
       // Redirect based on role
       if (res.user.role === "admin") {
         navigate("/admin");
-      } else if (res.user.role === "client") {
+      } 
+      else if (res.user.role === "client") {
         navigate("/client-dashboard");
-      } else {
+      } 
+      else {
         navigate("/volunteer-dashboard");
       }
 
       window.location.reload();
+
     } else {
-      alert(res.message || "Login failed");
+
+      setMessage(res.message || "Login failed");
+
     }
   };
 
   return (
+
     <div className="auth-page">
-      <h1>Login</h1>
 
-      <form onSubmit={handleSubmit} className="auth-form">
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
-        />
+      <div className="auth-card">
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
+        <h2 className="auth-title">
+          🔐 Login to TaskMate
+        </h2>
 
-        <button type="submit" className="btn">
-          Login
-        </button>
-      </form>
+        {message && (
+          <div className="auth-message">
+            {message}
+          </div>
+        )}
+
+        <form
+          onSubmit={handleSubmit}
+          className="auth-form"
+        >
+
+          <label>Email</label>
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Enter Email"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+
+          <label>Password</label>
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Enter Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
+
+          <button
+            type="submit"
+            className="auth-btn"
+          >
+            Login
+          </button>
+
+        </form>
+
+        <p className="auth-switch">
+
+          Don't have an account?
+
+          <Link to="/register">
+            Register
+          </Link>
+
+        </p>
+
+      </div>
+
     </div>
+
   );
 }

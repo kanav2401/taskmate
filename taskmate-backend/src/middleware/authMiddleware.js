@@ -1,30 +1,45 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
-const authMiddleware = async (req, res, next) => {
-  try {
-    const token = req.cookies.accessToken;
+export default async function authMiddleware(req, res, next) {
 
-    if (!token) {
-      return res.status(401).json({ message: "Not authorized" });
-    }
+try {
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+const token = req.cookies.accessToken;
 
-    const user = await User.findById(decoded.id).select("-password");
+if (!token) {
+return res.status(401).json({
+message: "Unauthorized"
+});
+}
 
-    if (!user) {
-      return res.status(401).json({ message: "User not found" });
-    }
+const decoded = jwt.verify(
+token,
+process.env.JWT_SECRET
+);
 
-    // 🔥 REMOVE BLOCK CHECK FROM HERE
-    // Do NOT return 403 here
+/* 🔥 LOAD FULL USER */
+const user = await User.findById(decoded.id);
 
-    req.user = user;
-    next();
-  } catch (error) {
-    return res.status(401).json({ message: "Invalid token" });
-  }
-};
+if (!user) {
+return res.status(401).json({
+message: "User not found"
+});
+}
 
-export default authMiddleware;
+/* 🔥 PASS COMPLETE USER */
+req.user = user;
+
+next();
+
+}catch(err){
+
+console.log("AUTH ERROR:",err.message);
+
+return res.status(403).json({
+message:"Invalid token"
+});
+
+}
+
+}

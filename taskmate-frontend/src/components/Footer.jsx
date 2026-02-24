@@ -30,25 +30,48 @@ export default function Footer() {
         <div className="footer-section">
           <h3>Support</h3>
           <ul>
-            <ul>
-  <li><Link to="/faq">FAQ</Link></li>
-  <li><Link to="/contact">Contact Us</Link></li>
-  <li><Link to="/privacy">Privacy Policy</Link></li>
-  <li><Link to="/terms">Terms & Conditions</Link></li>
-</ul>
-
+            <li><Link to="/faq">FAQ</Link></li>
+            <li><Link to="/contact">Contact Us</Link></li>
+            <li><Link to="/privacy">Privacy Policy</Link></li>
+            <li><Link to="/terms">Terms & Conditions</Link></li>
           </ul>
         </div>
 
         {/* SOCIAL */}
         <div className="footer-section">
           <h3>Connect</h3>
+
           <div className="social-links">
-            <a href="#" aria-label="Instagram">Instagram</a>
-            <a href="#" aria-label="LinkedIn">LinkedIn</a>
-            <a href="#" aria-label="Twitter">Twitter</a>
-           
+
+            <a
+              href="https://www.instagram.com/accounts/login/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
+              Instagram
+            </a>
+
+            <a
+              href="https://www.linkedin.com/login"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+            >
+              LinkedIn
+            </a>
+
+            <a
+              href="https://twitter.com/login"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitter"
+            >
+              Twitter
+            </a>
+
           </div>
+
         </div>
 
       </div>

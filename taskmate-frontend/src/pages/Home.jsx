@@ -36,6 +36,7 @@ export default function Home() {
 
       {/* HERO */}
       <section className="hero-section">
+
         <h1>Get help. Give help. Get paid.</h1>
 
         <p>
@@ -43,19 +44,31 @@ export default function Home() {
           deadline-based task system.
         </p>
 
+        {/* 🔥 IMPROVED BUTTONS */}
         <div className="hero-actions">
-          <button className="btn" onClick={handleFindVolunteer}>
-            Find a Volunteer
+
+          <button
+            className="hero-btn find-btn"
+            onClick={handleFindVolunteer}
+          >
+            🔎 Find a Volunteer
           </button>
 
-          <button className="btn secondary" onClick={handleWorkVolunteer}>
-            Work as Volunteer
+          <button
+            className="hero-btn work-btn"
+            onClick={handleWorkVolunteer}
+          >
+            💼 Work as Volunteer
           </button>
+
         </div>
+
       </section>
+
 
       {/* WHY TASKMATE */}
       <section className="info-section">
+
         <h2>Why TaskMate?</h2>
 
         <ul>
@@ -64,6 +77,7 @@ export default function Home() {
           <li>✔ Secure role-based system</li>
           <li>✔ Professional dashboards</li>
         </ul>
+
       </section>
 
     </div>

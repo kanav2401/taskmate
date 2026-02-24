@@ -1346,3 +1346,111 @@ a {
   border-radius: 8px;
   cursor: pointer;
 }
+.dashboard-header-row{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:20px;
+
+}
+
+
+.post-task-link-btn{
+
+background:#2563eb;
+color:white;
+
+padding:10px 18px;
+
+border-radius:8px;
+
+font-weight:600;
+
+text-decoration:none;
+
+transition:0.3s;
+
+}
+
+
+.post-task-link-btn:hover{
+
+background:#1d4ed8;
+transform:translateY(-1px);
+
+}
+/* HERO SECTION */
+
+.hero-section{
+  text-align:center;
+  padding:60px 20px;
+  background:linear-gradient(135deg,#2563eb,#6366f1);
+  color:white;
+  border-radius:20px;
+  margin:40px auto;
+  max-width:1100px;
+}
+
+
+/* BUTTON CONTAINER */
+
+.hero-actions{
+  margin-top:25px;
+  display:flex;
+  justify-content:center;
+  gap:20px;
+}
+
+
+/* COMMON BUTTON STYLE */
+
+.hero-btn{
+  border:none;
+  padding:14px 30px;
+  font-size:16px;
+  font-weight:600;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+
+/* FIND BUTTON */
+
+.find-btn{
+  background:white;
+  color:#2563eb;
+}
+
+.find-btn:hover{
+  background:#f1f5ff;
+  transform:translateY(-3px);
+}
+
+
+/* WORK BUTTON */
+
+.work-btn{
+  background:#0f172a;
+  color:white;
+}
+
+.work-btn:hover{
+  background:#020617;
+  transform:translateY(-3px);
+}
+
+
+/* WHY SECTION */
+
+.info-section{
+  margin:40px auto;
+  max-width:900px;
+  font-size:18px;
+}
+
+.info-section h2{
+  margin-bottom:10px;
+}

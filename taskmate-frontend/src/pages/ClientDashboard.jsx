@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   getClientTasks,
   completeTask,
@@ -86,7 +87,20 @@ export default function ClientDashboard() {
 
   return (
     <div className="dashboard-container-modern">
-      <h2 className="dashboard-title-modern">📋 Client Dashboard</h2>
+      <div className="dashboard-header-row">
+
+<h2 className="dashboard-title-modern">
+📋 Client Dashboard
+</h2>
+
+<Link
+ to="/post-task"
+ className="post-task-link-btn"
+>
+➕ Post New Task
+</Link>
+
+</div>
 
       {tasks.length === 0 ? (
         <p className="empty-text-modern">No tasks yet</p>

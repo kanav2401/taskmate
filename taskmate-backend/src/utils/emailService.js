@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 
 export const sendEmail = async (arg1, subjectArg, htmlArg) => {
+
   let to, subject, html;
 
   if (typeof arg1 === "object") {
@@ -13,20 +14,34 @@ export const sendEmail = async (arg1, subjectArg, htmlArg) => {
     html = htmlArg;
   }
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+  try {
 
-  await transporter.sendMail({
-    from: `"TaskMate" <${process.env.EMAIL_USER}>`,
-    to,
-    subject,
-    html,
-  });
+    const transporter = nodemailer.createTransport({
 
-  console.log("✅ Email sent to:", to);
+      service: "gmail",
+
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+
+    });
+
+    const info = await transporter.sendMail({
+
+      from: `"TaskMate Support" <${process.env.EMAIL_USER}>`,
+      to: to,
+      subject: subject,
+      html: html,
+
+    });
+
+    console.log("✅ Email sent:", info.response);
+
+  } catch (error) {
+
+    console.error("❌ EMAIL ERROR:", error.message);
+
+  }
+
 };

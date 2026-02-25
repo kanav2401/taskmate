@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 import {
   getAdminStats,
   getAllUsers,
@@ -27,33 +29,39 @@ import {
 const COLORS = ["#2563eb", "#16a34a", "#f59e0b", "#ef4444"];
 
 export default function AdminDashboard() {
+
   const [stats, setStats] = useState({});
   const [users, setUsers] = useState([]);
   const [tasks, setTasks] = useState([]);
 
-  /* ================= PAGINATION STATES ================= */
 
-  // Users Pagination
+  /* PAGINATION STATES */
+
   const [userPage, setUserPage] = useState(1);
   const [userLimit, setUserLimit] = useState(8);
   const [userTotal, setUserTotal] = useState(0);
   const [userTotalPages, setUserTotalPages] = useState(1);
 
-  // Tasks Pagination (for analytics dataset)
+
   const [taskPage, setTaskPage] = useState(1);
   const [taskLimit, setTaskLimit] = useState(8);
   const [taskTotal, setTaskTotal] = useState(0);
   const [taskTotalPages, setTaskTotalPages] = useState(1);
 
-  useEffect(() => {
-    loadData();
-  }, [userPage, userLimit, taskPage, taskLimit]);
 
-  const loadData = async () => {
+
+  useEffect(()=>{
+    loadData();
+  },[userPage,userLimit,taskPage,taskLimit]);
+
+
+
+  const loadData = async()=>{
+
     const statsData = await getAdminStats();
 
-    const usersData = await getAllUsers(userPage, userLimit);
-    const tasksData = await getAllTasksAdmin(taskPage, taskLimit);
+    const usersData = await getAllUsers(userPage,userLimit);
+    const tasksData = await getAllTasksAdmin(taskPage,taskLimit);
 
     setStats(statsData || {});
 
@@ -64,278 +72,509 @@ export default function AdminDashboard() {
     setTasks(tasksData?.data || []);
     setTaskTotal(tasksData?.total || 0);
     setTaskTotalPages(tasksData?.totalPages || 1);
+
   };
 
-  const handleUnblock = async (id) => {
-    await unblockUser(id);
-    loadData();
-  };
 
-  /* ================= BAN USER ================= */
 
-  const handleBan = async (id, permanent = false) => {
-    const reason = prompt("Enter ban reason:");
-    if (!reason) return;
+/* UNBLOCK USER */
 
-    let days = 0;
-    if (!permanent) {
-      days = prompt("Ban for how many days?");
-      if (!days) return;
-    }
+const handleUnblock = async(id)=>{
 
-    await fetch(`http://localhost:5000/api/admin/ban/${id}`, {
-      method: "PUT",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reason, days, permanent }),
-    });
+await unblockUser(id);
 
-    loadData();
-  };
+loadData();
 
-  /* ================= APPROVE UNBLOCK REQUEST ================= */
+};
 
-  const handleApproveRequest = async (id) => {
-    await fetch(`http://localhost:5000/api/admin/unblock/${id}`, {
-      method: "PUT",
-      credentials: "include",
-    });
 
-    loadData();
-  };
 
-  /* ================= Analytics Data ================= */
+/* BAN USER */
 
-  const tasksPerDay = Object.values(
-    tasks.reduce((acc, task) => {
-      const date = new Date(task.createdAt).toLocaleDateString();
-      if (!acc[date]) acc[date] = { date, count: 0 };
-      acc[date].count += 1;
-      return acc;
-    }, {})
-  );
+const handleBan = async(id,permanent=false)=>{
 
-  let cumulative = 0;
-  const growthTrend = tasksPerDay.map((item) => {
-    cumulative += item.count;
-    return { ...item, total: cumulative };
-  });
+const reason = prompt("Enter ban reason:");
 
-  const statusData = Object.values(
-    tasks.reduce((acc, task) => {
-      const status = task.status;
-      if (!acc[status]) acc[status] = { name: status, value: 0 };
-      acc[status].value += 1;
-      return acc;
-    }, {})
-  );
+if(!reason) return;
 
-  return (
-    <div className="admin-container">
-      <h1 className="admin-title">Admin Analytics Dashboard 📊</h1>
+let days = 0;
 
-      {/* ================= STATS ================= */}
-      <div className="admin-stats">
-        <div className="stat-box">
-          <h3>Total Users</h3>
-          <p>{stats.totalUsers || userTotal}</p>
-        </div>
+if(!permanent){
 
-        <div className="stat-box">
-          <h3>Total Tasks</h3>
-          <p>{stats.totalTasks || taskTotal}</p>
-        </div>
+days = prompt("Ban for how many days?");
 
-        <div className="stat-box">
-          <h3>Blocked Users</h3>
-          <p>{stats.blockedUsers || 0}</p>
-        </div>
-      </div>
+if(!days) return;
 
-      {/* ================= CHARTS ================= */}
-      <div className="charts-grid">
+}
 
-        <div className="chart-card">
-          <h2>Tasks Per Day</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={tasksPerDay}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="count" fill="#2563eb" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+await fetch(`http://localhost:5000/api/admin/ban/${id}`,{
 
-        <div className="chart-card">
-          <h2>Growth Trend</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={growthTrend}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="total" stroke="#16a34a" strokeWidth={3} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+method:"PUT",
+credentials:"include",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+reason,
+days,
+permanent
+})
 
-        <div className="chart-card">
-          <h2>Task Status Distribution</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={statusData}
-                dataKey="value"
-                nameKey="name"
-                outerRadius={100}
-                label
-              >
-                {statusData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+});
 
-      </div>
+loadData();
 
-      {/* ================= USERS TABLE ================= */}
-      <h2>All Users</h2>
+};
 
-      <div className="table-wrapper">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Ban Info</th>
-              <th>Request</th>
-              <th>Action</th>
-            </tr>
-          </thead>
 
-          <tbody>
-            {users.map((user) => (
-              <tr
-                key={user._id}
-                style={
-                  user.unblockRequested
-                    ? { background: "#fff7ed" }
-                    : {}
-                }
-              >
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
 
-                <td>
-                  <span
-                    className={
-                      user.isBlocked
-                        ? "badge badge-overdue"
-                        : "badge badge-completed"
-                    }
-                  >
-                    {user.isBlocked ? "Blocked" : "Active"}
-                  </span>
-                </td>
+/* APPROVE UNBLOCK */
 
-                <td>
-                  {user.isBlocked && (
-                    <>
-                      <div>Reason: {user.banReason || "—"}</div>
+const handleApproveRequest = async(id)=>{
 
-                      {!user.isPermanentlyBlocked && user.banUntil && (
-                        <div>
-                          Until: {new Date(user.banUntil).toDateString()}
-                        </div>
-                      )}
+await fetch(`http://localhost:5000/api/admin/unblock/${id}`,{
 
-                      {user.isPermanentlyBlocked && (
-                        <div>Permanent Ban</div>
-                      )}
-                    </>
-                  )}
-                </td>
+method:"PUT",
+credentials:"include"
 
-                <td>
-                  {user.unblockRequested && (
-                    <>
-                      <div style={{ color: "#ea580c", fontWeight: "600" }}>
-                        Unblock Requested
-                      </div>
-                      <div style={{ fontSize: "12px" }}>
-                        {user.unblockMessage}
-                      </div>
-                    </>
-                  )}
-                </td>
+});
 
-                <td>
-                  {!user.isBlocked && user.role !== "admin" && (
-                    <>
-                      <button
-                        className="btn-small"
-                        style={{ background: "#f59e0b", marginRight: "5px" }}
-                        onClick={() => handleBan(user._id, false)}
-                      >
-                        Temp Ban
-                      </button>
+loadData();
 
-                      <button
-                        className="btn-small"
-                        style={{ background: "#ef4444" }}
-                        onClick={() => handleBan(user._id, true)}
-                      >
-                        Permanent
-                      </button>
-                    </>
-                  )}
+};
 
-                  {user.isBlocked && !user.unblockRequested && (
-                    <button
-                      className="btn-small"
-                      onClick={() => handleUnblock(user._id)}
-                    >
-                      Unblock
-                    </button>
-                  )}
 
-                  {user.unblockRequested && (
-                    <button
-                      className="btn-small"
-                      style={{ background: "#16a34a" }}
-                      onClick={() => handleApproveRequest(user._id)}
-                    >
-                      Approve Request
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
 
-      {/* 🔥 USERS PAGINATION */}
-      <Pagination
-        page={userPage}
-        totalPages={userTotalPages}
-        total={userTotal}
-        limit={userLimit}
-        setPage={setUserPage}
-        setLimit={setUserLimit}
-      />
-    </div>
-  );
+/* ANALYTICS DATA */
+
+const tasksPerDay = Object.values(
+
+tasks.reduce((acc,task)=>{
+
+const date = new Date(task.createdAt).toLocaleDateString();
+
+if(!acc[date])
+acc[date]={date,count:0};
+
+acc[date].count+=1;
+
+return acc;
+
+},{})
+
+);
+
+
+
+let cumulative=0;
+
+const growthTrend = tasksPerDay.map(item=>{
+
+cumulative+=item.count;
+
+return{
+...item,
+total:cumulative
+};
+
+});
+
+
+
+const statusData = Object.values(
+
+tasks.reduce((acc,task)=>{
+
+const status = task.status;
+
+if(!acc[status])
+acc[status]={name:status,value:0};
+
+acc[status].value+=1;
+
+return acc;
+
+},{})
+
+);
+
+
+
+return(
+
+<div className="admin-container">
+
+
+<h1 className="admin-title">
+Admin Analytics Dashboard 📊
+</h1>
+
+
+
+{/* COMPLAINT BUTTON */}
+
+<Link
+to="/admin-complaints"
+className="post-task-link-btn"
+style={{marginBottom:"20px",display:"inline-block"}}
+>
+
+⚠ View Complaints
+
+</Link>
+
+
+
+{/* STATS */}
+
+<div className="admin-stats">
+
+<div className="stat-box">
+<h3>Total Users</h3>
+<p>{stats.totalUsers || userTotal}</p>
+</div>
+
+<div className="stat-box">
+<h3>Total Tasks</h3>
+<p>{stats.totalTasks || taskTotal}</p>
+</div>
+
+<div className="stat-box">
+<h3>Blocked Users</h3>
+<p>{stats.blockedUsers || 0}</p>
+</div>
+
+</div>
+
+
+
+{/* CHARTS */}
+
+<div className="charts-grid">
+
+
+<div className="chart-card">
+
+<h2>Tasks Per Day</h2>
+
+<ResponsiveContainer width="100%" height={300}>
+
+<BarChart data={tasksPerDay}>
+
+<CartesianGrid strokeDasharray="3 3"/>
+
+<XAxis dataKey="date"/>
+
+<YAxis/>
+
+<Tooltip/>
+
+<Bar dataKey="count" fill="#2563eb"/>
+
+</BarChart>
+
+</ResponsiveContainer>
+
+</div>
+
+
+
+<div className="chart-card">
+
+<h2>Growth Trend</h2>
+
+<ResponsiveContainer width="100%" height={300}>
+
+<LineChart data={growthTrend}>
+
+<CartesianGrid strokeDasharray="3 3"/>
+
+<XAxis dataKey="date"/>
+
+<YAxis/>
+
+<Tooltip/>
+
+<Line
+type="monotone"
+dataKey="total"
+stroke="#16a34a"
+strokeWidth={3}
+/>
+
+</LineChart>
+
+</ResponsiveContainer>
+
+</div>
+
+
+
+<div className="chart-card">
+
+<h2>Task Status Distribution</h2>
+
+<ResponsiveContainer width="100%" height={300}>
+
+<PieChart>
+
+<Pie
+data={statusData}
+dataKey="value"
+nameKey="name"
+outerRadius={100}
+label
+>
+
+{statusData.map((entry,index)=>(
+<Cell
+key={index}
+fill={COLORS[index%COLORS.length]}
+/>
+))}
+
+</Pie>
+
+<Tooltip/>
+
+<Legend/>
+
+</PieChart>
+
+</ResponsiveContainer>
+
+</div>
+
+</div>
+
+
+
+{/* USERS TABLE */}
+
+<h2>All Users</h2>
+
+
+<div className="table-wrapper">
+
+<table className="admin-table">
+
+<thead>
+
+<tr>
+
+<th>Name</th>
+<th>Email</th>
+<th>Role</th>
+<th>Status</th>
+<th>Ban Info</th>
+<th>Request</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+
+
+<tbody>
+
+{users.map(user=>(
+
+<tr
+key={user._id}
+style={user.unblockRequested?{background:"#fff7ed"}:{}}
+>
+
+<td>{user.name}</td>
+
+<td>{user.email}</td>
+
+<td>{user.role}</td>
+
+
+
+<td>
+
+<span
+className={
+user.isBlocked
+?"badge badge-overdue"
+:"badge badge-completed"
+}
+>
+
+{user.isBlocked?"Blocked":"Active"}
+
+</span>
+
+</td>
+
+
+
+<td>
+
+{user.isBlocked && (
+
+<>
+
+<div>
+Reason: {user.banReason || "—"}
+</div>
+
+
+{!user.isPermanentlyBlocked && user.banUntil && (
+
+<div>
+Until: {new Date(user.banUntil).toDateString()}
+</div>
+
+)}
+
+
+{user.isPermanentlyBlocked && (
+<div>Permanent Ban</div>
+)}
+
+</>
+
+)}
+
+</td>
+
+
+
+<td>
+
+{user.unblockRequested && (
+
+<>
+
+<div
+style={{
+color:"#ea580c",
+fontWeight:"600"
+}}
+>
+
+Unblock Requested
+
+</div>
+
+
+<div
+style={{
+fontSize:"12px"
+}}
+>
+
+{user.unblockMessage}
+
+</div>
+
+</>
+
+)}
+
+</td>
+
+
+
+<td>
+
+
+{!user.isBlocked && user.role!=="admin" && (
+
+<>
+
+<button
+className="btn-small"
+style={{background:"#f59e0b",marginRight:"5px"}}
+onClick={()=>handleBan(user._id,false)}
+>
+
+Temp Ban
+
+</button>
+
+
+<button
+className="btn-small"
+style={{background:"#ef4444"}}
+onClick={()=>handleBan(user._id,true)}
+>
+
+Permanent
+
+</button>
+
+</>
+
+)}
+
+
+
+{user.isBlocked && !user.unblockRequested && (
+
+<button
+className="btn-small"
+onClick={()=>handleUnblock(user._id)}
+>
+
+Unblock
+
+</button>
+
+)}
+
+
+
+{user.unblockRequested && (
+
+<button
+className="btn-small"
+style={{background:"#16a34a"}}
+onClick={()=>handleApproveRequest(user._id)}
+>
+
+Approve Request
+
+</button>
+
+)}
+
+
+
+</td>
+
+</tr>
+
+))}
+
+</tbody>
+
+</table>
+
+</div>
+
+
+
+{/* USERS PAGINATION */}
+
+<Pagination
+
+page={userPage}
+totalPages={userTotalPages}
+total={userTotal}
+limit={userLimit}
+setPage={setUserPage}
+setLimit={setUserLimit}
+
+/>
+
+
+
+</div>
+
+);
+
 }

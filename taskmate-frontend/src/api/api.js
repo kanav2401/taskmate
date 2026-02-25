@@ -1,8 +1,9 @@
 const API_URL = "http://localhost:5000/api";
 
 /* ========================================
-   🔥 COMMON FETCH OPTIONS
+   COMMON FETCH OPTIONS
 ======================================== */
+
 const defaultOptions = {
   credentials: "include",
   headers: {
@@ -39,6 +40,7 @@ export const logoutUser = async () => {
   });
 };
 
+
 /* =========================
    CLIENT APIs
 ========================= */
@@ -49,8 +51,10 @@ export const postTask = async (data) => {
     method: "POST",
     body: JSON.stringify(data),
   });
+
   return res.json();
 };
+
 
 export const getClientTasks = async (page = 1, limit = 8) => {
   const res = await fetch(
@@ -60,16 +64,31 @@ export const getClientTasks = async (page = 1, limit = 8) => {
       cache: "no-store",
     }
   );
+
   return res.json();
 };
+
 
 export const completeTask = async (id) => {
   const res = await fetch(`${API_URL}/tasks/${id}/complete`, {
     ...defaultOptions,
     method: "PUT",
   });
+
   return res.json();
 };
+
+
+export const rateTask = async (id, rating, review) => {
+  const res = await fetch(`${API_URL}/tasks/${id}/rate`, {
+    ...defaultOptions,
+    method: "PUT",
+    body: JSON.stringify({ rating, review }),
+  });
+
+  return res.json();
+};
+
 
 /* =========================
    VOLUNTEER APIs
@@ -83,16 +102,20 @@ export const getOpenTasks = async (page = 1, limit = 8) => {
       cache: "no-store",
     }
   );
+
   return res.json();
 };
+
 
 export const acceptTask = async (id) => {
   const res = await fetch(`${API_URL}/tasks/${id}/accept`, {
     ...defaultOptions,
     method: "PUT",
   });
+
   return res.json();
 };
+
 
 export const getVolunteerTasks = async (page = 1, limit = 8) => {
   const res = await fetch(
@@ -102,8 +125,10 @@ export const getVolunteerTasks = async (page = 1, limit = 8) => {
       cache: "no-store",
     }
   );
+
   return res.json();
 };
+
 
 export const submitTask = async (id, note) => {
   const res = await fetch(`${API_URL}/tasks/${id}/submit`, {
@@ -111,16 +136,20 @@ export const submitTask = async (id, note) => {
     method: "PUT",
     body: JSON.stringify({ note }),
   });
+
   return res.json();
 };
+
 
 export const requestUnblock = async () => {
   const res = await fetch(`${API_URL}/tasks/request-unblock`, {
     ...defaultOptions,
     method: "PUT",
   });
+
   return res.json();
 };
+
 
 /* =========================
    TASK DETAIL
@@ -132,17 +161,10 @@ export const getTaskById = async (id) => {
     method: "GET",
     cache: "no-store",
   });
+
   return res.json();
 };
 
-export const rateTask = async (id, rating, review) => {
-  const res = await fetch(`${API_URL}/tasks/${id}/rate`, {
-    ...defaultOptions,
-    method: "PUT",
-    body: JSON.stringify({ rating, review }),
-  });
-  return res.json();
-};
 
 /* =========================
    ADMIN APIs
@@ -153,8 +175,10 @@ export const getAdminStats = async () => {
     ...defaultOptions,
     cache: "no-store",
   });
+
   return res.json();
 };
+
 
 export const getAllUsers = async (page = 1, limit = 8) => {
   const res = await fetch(
@@ -164,16 +188,20 @@ export const getAllUsers = async (page = 1, limit = 8) => {
       cache: "no-store",
     }
   );
+
   return res.json();
 };
+
 
 export const unblockUser = async (id) => {
   const res = await fetch(`${API_URL}/admin/unblock/${id}`, {
     ...defaultOptions,
     method: "PUT",
   });
+
   return res.json();
 };
+
 
 export const getAllTasksAdmin = async (page = 1, limit = 8) => {
   const res = await fetch(
@@ -183,34 +211,47 @@ export const getAllTasksAdmin = async (page = 1, limit = 8) => {
       cache: "no-store",
     }
   );
+
   return res.json();
 };
 
-// ================= WALLET & ESCROW =================
+
+/* =========================
+   WALLET & ESCROW APIs
+========================= */
 
 export const fundTask = async (id) => {
   const res = await fetch(`${API_URL}/tasks/${id}/fund`, {
     ...defaultOptions,
     method: "PUT",
   });
+
   return res.json();
 };
+
 
 export const withdrawFunds = async () => {
   const res = await fetch(`${API_URL}/tasks/wallet/withdraw`, {
     ...defaultOptions,
     method: "PUT",
   });
+
   return res.json();
 };
+
 
 export const getTransactions = async () => {
-  const res = await fetch(`${API_URL}/tasks/wallet/transactions`, {
-    credentials: "include",
-  });
+  const res = await fetch(
+    `${API_URL}/tasks/wallet/transactions`,
+    {
+      ...defaultOptions,
+      cache: "no-store",
+    }
+  );
 
   return res.json();
 };
+
 
 /* =========================
    CHAT APIs
@@ -221,8 +262,10 @@ export const getChatMessages = async (taskId) => {
     ...defaultOptions,
     cache: "no-store",
   });
+
   return res.json();
 };
+
 
 export const sendChatMessage = async (data) => {
   const res = await fetch(`${API_URL}/chat`, {
@@ -230,8 +273,10 @@ export const sendChatMessage = async (data) => {
     method: "POST",
     body: JSON.stringify(data),
   });
+
   return res.json();
 };
+
 
 export const uploadChatFile = async (file) => {
   const formData = new FormData();
@@ -243,7 +288,46 @@ export const uploadChatFile = async (file) => {
     body: formData,
   });
 
+  return res.json();
+};
 
-  
+
+/* =========================
+   COMPLAINT APIs
+========================= */
+
+export const submitComplaint = async (taskId, message) => {
+
+  const res = await fetch(`${API_URL}/complaints`, {
+    ...defaultOptions,
+    method: "POST",
+    body: JSON.stringify({
+      taskId,
+      message,
+    }),
+  });
+
+  return res.json();
+};
+
+
+export const getComplaints = async () => {
+
+  const res = await fetch(`${API_URL}/complaints`, {
+    ...defaultOptions,
+    cache: "no-store",
+  });
+
+  return res.json();
+};
+
+
+export const deleteComplaint = async (id) => {
+
+  const res = await fetch(`${API_URL}/complaints/${id}`, {
+    ...defaultOptions,
+    method: "DELETE",
+  });
+
   return res.json();
 };

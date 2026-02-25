@@ -8,6 +8,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import complaintRoutes from "./routes/complaintRoutes.js";
 
 const app = express();
 
@@ -30,4 +31,6 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/complaints",complaintRoutes);
+
 export default app;

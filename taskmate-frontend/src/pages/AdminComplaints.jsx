@@ -1,4 +1,4 @@
-import {useEffect,useState} from "react";
+import { useEffect, useState } from "react";
 import {
 getComplaints,
 deleteComplaint
@@ -8,29 +8,20 @@ export default function AdminComplaints(){
 
 const [complaints,setComplaints] = useState([]);
 
-
 useEffect(()=>{
-
 loadComplaints();
-
 },[]);
 
 
 const loadComplaints = async()=>{
-
 const data = await getComplaints();
-
 setComplaints(Array.isArray(data)?data:[]);
-
 };
 
 
 const handleDelete = async(id)=>{
-
 await deleteComplaint(id);
-
 loadComplaints();
-
 };
 
 
@@ -39,7 +30,9 @@ return(
 
 <div className="admin-container">
 
-<h1>⚠ Complaints Panel</h1>
+<h1 className="admin-title">
+⚠ Complaints Panel
+</h1>
 
 
 <table className="admin-table">
@@ -48,8 +41,8 @@ return(
 
 <tr>
 
-<th>Client</th>
-<th>Volunteer</th>
+<th>Complainant</th>
+<th>Against</th>
 <th>Task</th>
 <th>Complaint</th>
 <th>Date</th>
@@ -66,23 +59,54 @@ return(
 
 <tr key={c._id}>
 
-<td>
 
-{c.client?.name}
-
-</td>
+{/* COMPLAINANT */}
 
 <td>
 
-{c.volunteer?.name}
+<b>{c.complainBy?.name || "-"}</b>
+
+<br/>
+
+<span className="badge badge-pending">
+
+{c.complainBy?.role}
+
+</span>
 
 </td>
+
+
+
+{/* AGAINST */}
 
 <td>
 
-{c.task?.title}
+<b>{c.complainAgainst?.name || "-"}</b>
+
+<br/>
+
+<span className="badge badge-overdue">
+
+{c.complainAgainst?.role}
+
+</span>
 
 </td>
+
+
+
+{/* TASK */}
+
+<td>
+
+{c.task?.title || "-"}
+
+</td>
+
+
+
+{/* MESSAGE */}
 
 <td>
 
@@ -90,12 +114,19 @@ return(
 
 </td>
 
+
+
+{/* DATE */}
+
 <td>
 
-{new Date(c.createdAt)
-.toDateString()}
+{new Date(c.createdAt).toDateString()}
 
 </td>
+
+
+
+{/* ACTION */}
 
 <td>
 

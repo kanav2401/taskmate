@@ -7,88 +7,159 @@ const router = express.Router();
 
 
 /* ======================
-CREATE COMPLAINT (CLIENT)
+CREATE COMPLAINT
+CLIENT OR VOLUNTEER
 ====================== */
 
-router.post("/",authMiddleware,async(req,res)=>{
+router.post("/", authMiddleware, async (req, res) => {
 
-try{
+try {
 
-if(req.user.role!=="client")
-return res.status(403).json({message:"Only clients can complain"});
+const { taskId, message } = req.body;
 
-const {taskId,message}=req.body;
+const task = await Task.findById(taskId)
+.populate("client volunteer");
 
-const task=await Task.findById(taskId);
-
-if(!task)
-return res.status(404).json({message:"Task not found"});
+if (!task)
+return res.status(404).json({ message: "Task not found" });
 
 
-const complaint=await Complaint.create({
+let complainAgainstUser = null;
 
-task:taskId,
-client:req.user.id,
-volunteer:task.volunteer,
-message
+
+/* CLIENT complaining */
+
+if (req.user.role === "client") {
+
+complainAgainstUser = task.volunteer?._id;
+
+}
+
+
+/* VOLUNTEER complaining */
+
+if (req.user.role === "volunteer") {
+
+complainAgainstUser = task.client?._id;
+
+}
+
+
+const complaint = await Complaint.create({
+
+task: taskId,
+
+complainBy: req.user.id,
+
+complainAgainst: complainAgainstUser,
+
+message,
+
+role: req.user.role
 
 });
 
 
 res.json({
-message:"Complaint submitted",
+
+message: "Complaint submitted",
+
 complaint
+
 });
 
+} catch (error) {
 
-}catch(error){
+console.log(error);
 
-res.status(500).json({message:"Complaint failed"});
+res.status(500).json({ message: "Complaint failed" });
 
 }
 
 });
 
 
-
 /* ======================
-GET COMPLAINTS (ADMIN)
+GET ALL COMPLAINTS
+ADMIN
 ====================== */
 
-router.get("/",authMiddleware,async(req,res)=>{
+router.get("/", authMiddleware, async (req, res) => {
 
-if(req.user.role!=="admin")
-return res.status(403).json({message:"Admin only"});
+try {
+
+if (req.user.role !== "admin")
+return res.status(403).json({ message: "Admin only" });
 
 
-const complaints=await Complaint.find()
-.populate("client","name email")
-.populate("volunteer","name email")
-.populate("task","title")
-.sort({createdAt:-1});
+const complaints = await Complaint.find()
+
+.populate("complainBy", "name email role")
+
+.populate("complainAgainst", "name email role")
+
+.populate({
+path: "task",
+select: "title client volunteer",
+populate: [
+{
+path: "client",
+select: "name email"
+},
+{
+path: "volunteer",
+select: "name email"
+}
+]
+})
+
+.sort({ createdAt: -1 });
 
 
 res.json(complaints);
 
-});
+} catch (error) {
 
+console.log(error);
+
+res.status(500).json({ message: "Failed to load complaints" });
+
+}
+
+});
 
 
 /* ======================
 DELETE COMPLAINT
+ADMIN
 ====================== */
 
-router.delete("/:id",authMiddleware,async(req,res)=>{
+router.delete("/:id", authMiddleware, async (req, res) => {
 
-if(req.user.role!=="admin")
-return res.status(403).json({message:"Admin only"});
+try {
+
+if (req.user.role !== "admin")
+return res.status(403).json({ message: "Admin only" });
+
 
 await Complaint.findByIdAndDelete(req.params.id);
 
-res.json({message:"Complaint deleted"});
+
+res.json({
+
+message: "Complaint deleted"
 
 });
 
+} catch (error) {
+
+res.status(500).json({
+message: "Delete failed"
+});
+
+}
+
+});
 
 
 export default router;

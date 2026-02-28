@@ -7,12 +7,12 @@ type:mongoose.Schema.Types.ObjectId,
 ref:"Task"
 },
 
-client:{
+complainBy:{
 type:mongoose.Schema.Types.ObjectId,
 ref:"User"
 },
 
-volunteer:{
+complainAgainst:{
 type:mongoose.Schema.Types.ObjectId,
 ref:"User"
 },
@@ -20,6 +20,10 @@ ref:"User"
 message:{
 type:String,
 required:true
+},
+
+role:{
+type:String
 },
 
 status:{

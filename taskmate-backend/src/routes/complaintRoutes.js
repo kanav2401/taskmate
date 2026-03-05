@@ -3,8 +3,10 @@ import authMiddleware from "../middleware/authMiddleware.js";
 import Complaint from "../models/Complaint.js";
 import Task from "../models/Task.js";
 
-const router = express.Router();
+/* AI SERVICE */
+import { analyzeComplaint } from "../services/aiService.js";
 
+const router = express.Router();
 
 /* ======================
 CREATE COMPLAINT
@@ -23,27 +25,51 @@ const task = await Task.findById(taskId)
 if (!task)
 return res.status(404).json({ message: "Task not found" });
 
-
 let complainAgainstUser = null;
-
 
 /* CLIENT complaining */
 
 if (req.user.role === "client") {
-
 complainAgainstUser = task.volunteer?._id;
-
 }
-
 
 /* VOLUNTEER complaining */
 
 if (req.user.role === "volunteer") {
-
 complainAgainstUser = task.client?._id;
+}
+
+/* ======================
+AI COMPLAINT ANALYSIS
+====================== */
+
+let aiData = {
+category: "",
+severity: "",
+suggestedAction: ""
+};
+
+try {
+
+const aiResult = await analyzeComplaint(message);
+
+const parsed = JSON.parse(aiResult);
+
+aiData = {
+category: parsed.category || "",
+severity: parsed.severity || "",
+suggestedAction: parsed.suggestedAction || ""
+};
+
+} catch (err) {
+
+console.log("AI ANALYSIS FAILED:", err);
 
 }
 
+/* ======================
+CREATE COMPLAINT
+====================== */
 
 const complaint = await Complaint.create({
 
@@ -55,10 +81,14 @@ complainAgainst: complainAgainstUser,
 
 message,
 
-role: req.user.role
+role: req.user.role,
+
+aiCategory: aiData.category,
+aiSeverity: aiData.severity,
+aiSuggestedAction: aiData.suggestedAction,
+aiAnalyzed: true
 
 });
-
 
 res.json({
 
@@ -78,7 +108,6 @@ res.status(500).json({ message: "Complaint failed" });
 
 });
 
-
 /* ======================
 GET ALL COMPLAINTS
 ADMIN
@@ -90,7 +119,6 @@ try {
 
 if (req.user.role !== "admin")
 return res.status(403).json({ message: "Admin only" });
-
 
 const complaints = await Complaint.find()
 
@@ -115,7 +143,6 @@ select: "name email"
 
 .sort({ createdAt: -1 });
 
-
 res.json(complaints);
 
 } catch (error) {
@@ -127,7 +154,6 @@ res.status(500).json({ message: "Failed to load complaints" });
 }
 
 });
-
 
 /* ======================
 DELETE COMPLAINT
@@ -141,14 +167,10 @@ try {
 if (req.user.role !== "admin")
 return res.status(403).json({ message: "Admin only" });
 
-
 await Complaint.findByIdAndDelete(req.params.id);
 
-
 res.json({
-
 message: "Complaint deleted"
-
 });
 
 } catch (error) {
@@ -160,6 +182,5 @@ message: "Delete failed"
 }
 
 });
-
 
 export default router;

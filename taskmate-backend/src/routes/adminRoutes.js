@@ -8,6 +8,7 @@ import {
   getAllTasks,
   banUser,
   unblockUser,
+  getFlaggedMessages
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -34,5 +35,10 @@ router.put("/unblock/:id", unblockUser);
    TASKS
 ===================================== */
 router.get("/tasks", getAllTasks);
+
+/* =====================================
+   FLAGGED CHAT MESSAGES (AI MODERATION)
+===================================== */
+router.get("/flagged-messages", getFlaggedMessages);
 
 export default router;

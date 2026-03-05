@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import Task from "../models/Task.js";
 import { sendEmail } from "../utils/emailService.js";
 import { paginate } from "../utils/paginate.js";
-
+import Message from "../models/Message.js";
 /* =====================================
    BAN USER (TEMPORARY OR PERMANENT)
 ===================================== */
@@ -145,6 +145,27 @@ export const getAllTasks = async (req, res) => {
   }
 };
 
+/* ===============================
+   GET FLAGGED CHAT MESSAGES
+=============================== */
+
+export const getFlaggedMessages = async (req, res) => {
+
+  try {
+
+    const messages = await Message.find({ flagged: true })
+      .populate("sender", "name email")
+      .populate("task", "title")
+      .sort({ createdAt: -1 });
+
+    res.json(messages);
+
+  } catch (error) {
+
+    console.error("FLAGGED MESSAGE ERROR:", error);
+    res.status(500).json({ message: "Failed to fetch flagged messages" });
+
+  }};
 /* =====================================
    ADVANCED ANALYTICS
 ===================================== */

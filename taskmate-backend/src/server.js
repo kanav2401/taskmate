@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config(); // ✅ SIMPLE AND RELIABLE
+dotenv.config();
 
 import http from "http";
 import { Server } from "socket.io";
@@ -8,6 +8,10 @@ import connectDB from "./config/db.js";
 import app from "./app.js";
 import deadlineChecker from "./jobs/deadlineChecker.js";
 import { sendEmail } from "./utils/emailService.js";
+
+/* AI + CHAT */
+import Message from "./models/Message.js";
+import { detectToxicMessage } from "./services/aiService.js";
 
 /* ===============================
    DEBUG ENV (REMOVE LATER)
@@ -57,23 +61,73 @@ io.on("connection", (socket) => {
 
   console.log("🔵 User connected:", socket.id);
 
-  /* REGISTER USER FOR NOTIFICATIONS */
+  /* ===============================
+     REGISTER USER
+  =============================== */
 
   socket.on("registerUser", (userId) => {
     onlineUsers.set(userId, socket.id);
   });
 
-  /* JOIN CHAT ROOM */
+  /* ===============================
+     JOIN CHAT ROOM
+  =============================== */
 
   socket.on("joinRoom", (taskId) => {
     socket.join(taskId);
   });
 
-  /* SEND CHAT MESSAGE */
+  /* ===============================
+     SEND CHAT MESSAGE (AI MODERATION)
+  =============================== */
 
-  socket.on("sendMessage", (data) => {
-    io.to(data.taskId).emit("receiveMessage", data);
+  socket.on("sendMessage", async (data) => {
+
+    try {
+
+      /* AI SCAM / TOXIC DETECTION */
+
+      const aiResult = await detectToxicMessage(data.text);
+
+      let parsed;
+
+      try {
+        parsed = JSON.parse(aiResult);
+      } catch {
+        parsed = { flagged: false };
+      }
+
+      /* SAVE MESSAGE */
+
+      const newMessage = new Message({
+        task: data.taskId,
+        sender: data.sender,
+        text: data.text,
+        fileUrl: data.fileUrl || null,
+        delivered: true,
+
+        flagged: parsed.flagged,
+        flagReason: parsed.reason || "",
+        aiChecked: true
+      });
+
+      await newMessage.save();
+
+      /* SEND MESSAGE TO CHAT ROOM */
+
+      io.to(data.taskId).emit("receiveMessage", newMessage);
+
+    } catch (error) {
+
+      console.error("CHAT MESSAGE ERROR:", error);
+
+    }
+
   });
+
+  /* ===============================
+     DISCONNECT
+  =============================== */
 
   socket.on("disconnect", () => {
 
@@ -85,6 +139,7 @@ io.on("connection", (socket) => {
         break;
       }
     }
+
   });
 
 });

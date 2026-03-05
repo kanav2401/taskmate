@@ -12,6 +12,7 @@ export default function PostTask() {
   });
 
   const [message, setMessage] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({
@@ -20,7 +21,58 @@ export default function PostTask() {
     });
   };
 
+  /* ===============================
+     AI DESCRIPTION IMPROVER
+  =============================== */
+
+  const improveWithAI = async () => {
+
+    if (!form.description) {
+      setMessage("Please write a description first.");
+      return;
+    }
+
+    try {
+
+      setAiLoading(true);
+      setMessage("");
+
+      const res = await fetch("http://localhost:5000/api/ai/improve-task", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          description: form.description
+        }),
+      });
+
+      const data = await res.json();
+
+      setForm({
+        ...form,
+        description: data.improved
+      });
+
+    } catch (error) {
+
+      console.error(error);
+      setMessage("AI failed to improve description");
+
+    } finally {
+
+      setAiLoading(false);
+
+    }
+  };
+
+  /* ===============================
+     POST TASK
+  =============================== */
+
   const handleSubmit = async (e) => {
+
     e.preventDefault();
 
     try {
@@ -37,7 +89,9 @@ export default function PostTask() {
       });
 
     } catch (error) {
+
       setMessage("Failed to post task");
+
     }
   };
 
@@ -63,6 +117,7 @@ export default function PostTask() {
         >
 
           <div className="form-group">
+
             <label>Task Title</label>
 
             <input
@@ -72,6 +127,7 @@ export default function PostTask() {
               onChange={handleChange}
               required
             />
+
           </div>
 
 
@@ -86,6 +142,17 @@ export default function PostTask() {
               onChange={handleChange}
               required
             />
+
+            {/* AI BUTTON */}
+
+            <button
+              type="button"
+              className="ai-improve-btn"
+              onClick={improveWithAI}
+              disabled={aiLoading}
+            >
+              {aiLoading ? "✨ Improving..." : "✨ Improve with AI"}
+            </button>
 
           </div>
 

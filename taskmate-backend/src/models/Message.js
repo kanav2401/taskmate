@@ -7,30 +7,57 @@ const messageSchema = new mongoose.Schema(
       ref: "Task",
       required: true,
     },
+
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+
     text: {
       type: String,
       default: "",
     },
+
     fileUrl: {
       type: String,
       default: null,
     },
+
     delivered: {
       type: Boolean,
       default: false,
     },
+
     seen: {
       type: Boolean,
       default: false,
     },
+
+    /* ===============================
+       AI MODERATION FIELDS
+    =============================== */
+
+    flagged: {
+      type: Boolean,
+      default: false,
+    },
+
+    flagReason: {
+      type: String,
+      default: "",
+    },
+
+    aiChecked: {
+      type: Boolean,
+      default: false,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 const Message = mongoose.model("Message", messageSchema);
+
 export default Message;

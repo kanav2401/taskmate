@@ -9,6 +9,9 @@ import chatRoutes from "./routes/chatRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import complaintRoutes from "./routes/complaintRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
+
+
 
 const app = express();
 
@@ -32,5 +35,6 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/complaints",complaintRoutes);
+app.use("/api/ai", aiRoutes);
 
 export default app;

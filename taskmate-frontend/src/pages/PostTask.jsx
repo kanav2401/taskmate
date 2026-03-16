@@ -27,7 +27,7 @@ export default function PostTask() {
 
   const improveWithAI = async () => {
 
-    if (!form.description) {
+    if (!form.description.trim()) {
       setMessage("Please write a description first.");
       return;
     }
@@ -40,25 +40,33 @@ export default function PostTask() {
       const res = await fetch("http://localhost:5000/api/ai/improve-task", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         credentials: "include",
         body: JSON.stringify({
           description: form.description
-        }),
+        })
       });
+
+      if (!res.ok) {
+        throw new Error("AI request failed");
+      }
 
       const data = await res.json();
 
-      setForm({
-        ...form,
-        description: data.improved
-      });
+      if (data?.improved) {
+        setForm((prev) => ({
+          ...prev,
+          description: data.improved
+        }));
+      } else {
+        setMessage("AI could not improve description.");
+      }
 
     } catch (error) {
 
-      console.error(error);
-      setMessage("AI failed to improve description");
+      console.error("AI Error:", error);
+      setMessage("AI failed to improve description.");
 
     } finally {
 
@@ -90,6 +98,7 @@ export default function PostTask() {
 
     } catch (error) {
 
+      console.error(error);
       setMessage("Failed to post task");
 
     }
@@ -116,6 +125,8 @@ export default function PostTask() {
           onSubmit={handleSubmit}
         >
 
+          {/* TITLE */}
+
           <div className="form-group">
 
             <label>Task Title</label>
@@ -130,6 +141,8 @@ export default function PostTask() {
 
           </div>
 
+
+          {/* DESCRIPTION */}
 
           <div className="form-group">
 
@@ -156,6 +169,8 @@ export default function PostTask() {
 
           </div>
 
+
+          {/* BUDGET + DEADLINE */}
 
           <div className="form-row">
 
@@ -191,6 +206,8 @@ export default function PostTask() {
 
           </div>
 
+
+          {/* SUBMIT */}
 
           <button
             type="submit"

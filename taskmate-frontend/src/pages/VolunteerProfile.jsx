@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import RatingDisplay from "../components/RatingDisplay";
 import { User, Mail, Star, ArrowLeft, ShieldCheck, Award } from "lucide-react";
+import { API_URL } from "../api/api";
 
 export default function VolunteerProfile() {
   const { id } = useParams();
@@ -15,7 +16,7 @@ export default function VolunteerProfile() {
 
   const fetchVolunteer = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${id}`, { credentials: "include" });
+      const res = await fetch(`${API_URL}/users/${id}`, { credentials: "include" });
       const data = await res.json();
       setVolunteer(data);
     } catch (err) {

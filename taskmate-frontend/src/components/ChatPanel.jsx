@@ -3,6 +3,7 @@ import {
   getChatMessages,
   sendChatMessage,
   uploadChatFile,
+  API_URL,
 } from "../api/api";
 import { X, Send, Paperclip, File, MessageSquare } from "lucide-react";
 
@@ -27,7 +28,7 @@ export default function ChatPanel({ taskId, onClose }) {
   }, [messages]);
 
   const fetchUser = async () => {
-    const res = await fetch("http://localhost:5000/api/auth/me", {
+    const res = await fetch(`${API_URL}/auth/me`, {
       credentials: "include",
     });
     const data = await res.json();

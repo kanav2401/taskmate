@@ -11,6 +11,19 @@ const notificationSchema = new mongoose.Schema(
     title: String,
     message: String,
 
+    type: {
+      type: String,
+      enum: [
+        "task_accepted",
+        "task_submitted",
+        "task_completed",
+        "rating",
+        "complaint",
+        "general",
+      ],
+      default: "general",
+    },
+
     isRead: {
       type: Boolean,
       default: false,

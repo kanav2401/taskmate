@@ -1,15 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
 import {
   getChatMessages,
   sendChatMessage,
   uploadChatFile,
 } from "../api/api";
 import { X, Send, Paperclip, File, MessageSquare } from "lucide-react";
-
-const socket = io("http://localhost:5000", {
-  withCredentials: true,
-});
+import socket from "../utils/socket";
 
 export default function Chat({ taskId, user, onClose }) {
   const [messages, setMessages] = useState([]);

@@ -4,7 +4,8 @@ import {
   getVolunteerTasks,
   submitTask,
   requestUnblock,
-  submitComplaint
+  submitComplaint,
+  API_URL,
 } from "../api/api";
 import Pagination from "../components/Pagination";
 import { Wallet, Star, AlertCircle, FileText, CheckCircle, Target, ArrowRight } from "lucide-react";
@@ -30,7 +31,7 @@ export default function VolunteerDashboard() {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/me", { credentials: "include" });
+      const res = await fetch(`${API_URL}/auth/me`, { credentials: "include" });
       const data = await res.json();
       setUser(data);
     } catch {

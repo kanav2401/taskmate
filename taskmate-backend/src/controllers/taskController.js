@@ -297,6 +297,29 @@ if (task.paymentStatus === "funded") {
     amount: task.budget,
   });
 }
+
+    /* ========== NOTIFY VOLUNTEER ========== */
+    const volunteerId = task.volunteer?._id || task.volunteer;
+    if (volunteerId) {
+      await Notification.create({
+        user: volunteerId,
+        title: "Task Completed",
+        message: `Your task "${task.title}" has been marked as completed and payment has been processed.`,
+        type: "task_completed",
+      });
+
+      const volunteerSocketId = onlineUsers.get(volunteerId.toString());
+      if (volunteerSocketId) {
+        io.to(volunteerSocketId).emit("newNotification", {
+          title: "Task Completed",
+          message: `Your task "${task.title}" has been marked as completed and payment has been processed.`,
+          type: "task_completed",
+          isRead: false,
+          createdAt: new Date(),
+        });
+      }
+    }
+
     res.json({ message: "Task marked as completed" });
   } catch (error) {
     res.status(500).json({ message: "Completion failed" });
@@ -399,6 +422,25 @@ export const rateTask = async (req, res) => {
       totalScore / volunteer.totalRatings;
 
     await volunteer.save();
+
+    /* ========== NOTIFY VOLUNTEER ========== */
+    await Notification.create({
+      user: task.volunteer,
+      title: "New Rating Received",
+      message: `You have received a new rating from client.`,
+      type: "rating",
+    });
+
+    const volunteerSocketId = onlineUsers.get(task.volunteer.toString());
+    if (volunteerSocketId) {
+      io.to(volunteerSocketId).emit("newNotification", {
+        title: "New Rating Received",
+        message: `You have received a new rating from client.`,
+        type: "rating",
+        isRead: false,
+        createdAt: new Date(),
+      });
+    }
 
     res.json({ message: "Rating submitted successfully" });
   } catch (error) {

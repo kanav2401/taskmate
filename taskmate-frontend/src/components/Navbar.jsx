@@ -2,17 +2,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { isLoggedIn, removeUser, getUser } from "../utils/auth";
 import NotificationBell from "./NotificationBell";
 import { useEffect, useState } from "react";
-import io from "socket.io-client";
+import socket from "../utils/socket";
+import { BASE_URL } from "../api/api";
 import { Menu, X, LayoutDashboard, Search, LogOut, ShieldCheck, UserCircle, Briefcase } from "lucide-react";
 import logoImage from "../assets/logo1.jpg.png";
-
-/* ===============================
-   SOCKET CONNECTION
-=============================== */
-
-const socket = io("http://localhost:5000", {
-  withCredentials: true,
-});
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -34,7 +27,7 @@ export default function Navbar() {
   =============================== */
 
   const handleLogout = async () => {
-    await fetch("http://localhost:5000/api/auth/logout", {
+    await fetch(`${BASE_URL}/api/auth/logout`, {
       method: "POST",
       credentials: "include",
     });

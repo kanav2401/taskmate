@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AlertCircle, CheckCircle2, MessageSquare, Send } from "lucide-react";
+import { API_URL } from "../api/api";
 
 export default function ComplaintCenter() {
   const [message, setMessage] = useState("");
@@ -20,7 +21,7 @@ export default function ComplaintCenter() {
       setError("");
       setSuccess("");
 
-      const res = await fetch("http://localhost:5000/api/users/request-unblock", {
+      const res = await fetch(`${API_URL}/users/request-unblock`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -37,7 +38,7 @@ export default function ComplaintCenter() {
       setMessage("");
 
       // 🔥 Auto logout after complaint submission
-      await fetch("http://localhost:5000/api/auth/logout", {
+      await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

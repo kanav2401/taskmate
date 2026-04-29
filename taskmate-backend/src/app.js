@@ -10,6 +10,7 @@ import userRoutes from "./routes/userRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import complaintRoutes from "./routes/complaintRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 
 
 
@@ -17,7 +18,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
   })
 );
@@ -36,5 +37,6 @@ app.use("/api/users", userRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/complaints",complaintRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/contact", contactRoutes);
 
 export default app;

@@ -1,6 +1,59 @@
-import { Mail, MapPin, Phone, Send } from "lucide-react";
+import { useState } from "react";
+import { Mail, MapPin, Phone, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { API_URL } from "../api/api";
 
 export default function Contact() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    /* ---------- CLIENT-SIDE VALIDATION ---------- */
+    if (!name.trim() || !email.trim() || !message.trim()) {
+      setError("All fields are required.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    /* ---------- SUBMIT ---------- */
+    try {
+      setLoading(true);
+
+      const res = await fetch(`${API_URL}/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), message: message.trim() }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong.");
+      }
+
+      setSuccess(data.message || "Your message has been sent successfully!");
+      setName("");
+      setEmail("");
+      setMessage("");
+    } catch (err) {
+      setError(err.message || "Failed to send message. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen py-24 bg-background">
       <div className="container mx-auto px-4 max-w-5xl">
@@ -32,7 +85,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground font-medium mb-1">Email Support</p>
-                    <a href="mailto:support@taskmate.com" className="text-lg text-foreground hover:text-primary transition-colors">support@taskmate.com</a>
+                    <a href="mailto:sharmakanav53@gmail.com" className="text-lg text-foreground hover:text-primary transition-colors">sharmakanav53@gmail.com</a>
                   </div>
                 </div>
 
@@ -42,7 +95,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground font-medium mb-1">Phone (Emergencies)</p>
-                    <p className="text-lg text-foreground">+1 (555) 123-4567</p>
+                    <p className="text-lg text-foreground">7814752729</p>
                   </div>
                 </div>
 
@@ -52,7 +105,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground font-medium mb-1">Office Location</p>
-                    <p className="text-lg text-foreground">123 Innovation Drive<br/>Tech Hub, CA 94000</p>
+                    <p className="text-lg text-foreground">Phase 8A<br/>Mohali, Punjab</p>
                   </div>
                 </div>
               </div>
@@ -62,13 +115,36 @@ export default function Contact() {
           {/* Contact Form */}
           <div className="glass-card p-8 rounded-2xl">
             <h3 className="text-2xl font-semibold mb-6 text-foreground border-none">Send a Message</h3>
-            <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); alert('Message sent!'); }}>
+
+            {/* SUCCESS MESSAGE */}
+            {success && (
+              <div className="bg-green-500/10 border border-green-500/30 text-green-400 p-4 rounded-xl flex items-start gap-3 mb-6 animate-in fade-in slide-in-from-top-4">
+                <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold text-sm">Message Sent!</h4>
+                  <p className="text-sm opacity-90">{success}</p>
+                </div>
+              </div>
+            )}
+
+            {/* ERROR MESSAGE */}
+            {error && (
+              <div className="bg-destructive/10 border border-destructive/30 text-destructive p-4 rounded-xl flex items-start gap-3 mb-6 animate-in fade-in slide-in-from-top-4">
+                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                <p className="text-sm font-medium">{error}</p>
+              </div>
+            )}
+
+            <form className="space-y-5" onSubmit={handleSubmit}>
               <div className="space-y-2 text-left">
                 <label className="text-sm font-medium text-foreground">Full Name</label>
                 <input 
                   type="text" 
                   placeholder="John Doe" 
-                  className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={loading}
+                  className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all disabled:opacity-50"
                   required
                 />
               </div>
@@ -77,8 +153,11 @@ export default function Contact() {
                 <label className="text-sm font-medium text-foreground">Email Address</label>
                 <input 
                   type="email" 
-                  placeholder="john@example.com" 
-                  className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                  placeholder="john@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
+                  className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all disabled:opacity-50"
                   required
                 />
               </div>
@@ -88,16 +167,26 @@ export default function Contact() {
                 <textarea 
                   rows="5"
                   placeholder="How can we help you?" 
-                  className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  disabled={loading}
+                  className="w-full bg-background/50 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none disabled:opacity-50"
                   required
                 />
               </div>
 
               <button 
                 type="submit" 
-                className="w-full brand-gradient text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-primary/30 transition-all"
+                disabled={loading}
+                className="w-full brand-gradient text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-primary/30 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Send Message <Send className="w-4 h-4" />
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    Sending... <Loader2 className="w-4 h-4 animate-spin" />
+                  </span>
+                ) : (
+                  <>Send Message <Send className="w-4 h-4" /></>
+                )}
               </button>
             </form>
           </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { withdrawFunds, getTransactions } from "../api/api";
+import { withdrawFunds, getTransactions, API_URL } from "../api/api";
 import { Wallet, ArrowUpRight, ArrowDownLeft, Banknote, History, CreditCard, Clock } from "lucide-react";
 
 export default function WalletPage() {
@@ -14,7 +14,7 @@ export default function WalletPage() {
   const loadData = async () => {
     setLoading(true);
     try {
-        const res = await fetch("http://localhost:5000/api/auth/me", {
+        const res = await fetch(`${API_URL}/auth/me`, {
         credentials: "include",
         });
 

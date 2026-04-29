@@ -5,6 +5,7 @@ import {
   getAllUsers,
   unblockUser,
   getAllTasksAdmin,
+  API_URL,
 } from "../api/api";
 import Pagination from "../components/Pagination";
 import {
@@ -59,7 +60,7 @@ export default function AdminDashboard() {
       if (!days) return;
     }
 
-    await fetch(`http://localhost:5000/api/admin/ban/${id}`, {
+    await fetch(`${API_URL}/admin/ban/${id}`, {
       method: "PUT",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -69,7 +70,7 @@ export default function AdminDashboard() {
   };
 
   const handleApproveRequest = async (id) => {
-    await fetch(`http://localhost:5000/api/admin/unblock/${id}`, {
+    await fetch(`${API_URL}/admin/unblock/${id}`, {
       method: "PUT",
       credentials: "include"
     });

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { postTask } from "../api/api";
+import { postTask, API_URL } from "../api/api";
 import { Sparkles, Calendar, DollarSign, FileText, Type, CheckCircle2, ArrowRight } from "lucide-react";
 
 export default function PostTask() {
@@ -37,7 +37,7 @@ export default function PostTask() {
       setError("");
       setMessage("");
 
-      const res = await fetch("http://localhost:5000/api/ai/improve-task", {
+      const res = await fetch(`${API_URL}/ai/improve-task`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

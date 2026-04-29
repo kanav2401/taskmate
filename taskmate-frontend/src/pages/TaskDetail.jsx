@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { getTaskById } from "../api/api";
+import { getTaskById, API_URL } from "../api/api";
 import Chat from "../components/Chat";
 import { ArrowLeft, MessageSquare, Clock, IndianRupee, FileText, User, Mail, ShieldCheck, CheckCircle2 } from "lucide-react";
 
@@ -21,7 +21,7 @@ export default function TaskDetail() {
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/auth/me", { withCredentials: true });
+      const res = await axios.get(`${API_URL}/auth/me`, { withCredentials: true });
       setUser(res.data);
     } catch {
       setUser(null);

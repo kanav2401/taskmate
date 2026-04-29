@@ -1,11 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import { io } from "socket.io-client";
 import { getUser } from "../utils/auth";
-import { Bell, Check, X } from "lucide-react";
-
-const socket = io("http://localhost:5000", {
-  withCredentials: true,
-});
+import { Bell, Check } from "lucide-react";
+import { API_URL } from "../api/api";
+import socket from "../utils/socket";
 
 export default function NotificationBell() {
   const user = getUser();
@@ -46,9 +43,9 @@ export default function NotificationBell() {
   /* ================= FETCH NOTIFICATIONS ================= */
   const loadNotifications = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/notifications", {
+      const res = await fetch(`${API_URL}/notifications`, {
         method: "GET",
-        credentials: "include", // ✅ VERY IMPORTANT
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
       });
 
@@ -71,7 +68,7 @@ export default function NotificationBell() {
   const markRead = async (id, e) => {
     if (e) e.stopPropagation();
     try {
-      await fetch(`http://localhost:5000/api/notifications/${id}/read`, {
+      await fetch(`${API_URL}/notifications/${id}/read`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

@@ -2,6 +2,8 @@ import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
 import Complaint from "../models/Complaint.js";
 import Task from "../models/Task.js";
+import Notification from "../models/Notification.js";
+import { io, onlineUsers } from "../server.js";
 
 /* AI SERVICE */
 import { analyzeComplaint } from "../services/aiService.js";
@@ -89,6 +91,34 @@ aiSuggestedAction: aiData.suggestedAction,
 aiAnalyzed: true
 
 });
+
+/* ======================
+NOTIFY BOTH PARTIES
+====================== */
+
+const usersToNotify = [];
+if (task.client?._id) usersToNotify.push(task.client._id);
+if (task.volunteer?._id) usersToNotify.push(task.volunteer._id);
+
+for (const userId of usersToNotify) {
+  await Notification.create({
+    user: userId,
+    title: "Complaint Registered",
+    message: `A complaint has been registered regarding your task "${task.title}".`,
+    type: "complaint",
+  });
+
+  const socketId = onlineUsers.get(userId.toString());
+  if (socketId) {
+    io.to(socketId).emit("newNotification", {
+      title: "Complaint Registered",
+      message: `A complaint has been registered regarding your task "${task.title}".`,
+      type: "complaint",
+      isRead: false,
+      createdAt: new Date(),
+    });
+  }
+}
 
 res.json({
 

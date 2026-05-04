@@ -51,4 +51,14 @@ app.use("/api/complaints",complaintRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/contact", contactRoutes);
 
+// 🔍 Debug endpoint — visit /api/debug/cors to verify deployed CORS config
+// Remove this after confirming everything works
+app.get("/api/debug/cors", (req, res) => {
+  res.json({
+    allowedOrigins,
+    CLIENT_URL: process.env.CLIENT_URL || "NOT SET",
+    NODE_ENV: process.env.NODE_ENV || "NOT SET",
+  });
+});
+
 export default app;

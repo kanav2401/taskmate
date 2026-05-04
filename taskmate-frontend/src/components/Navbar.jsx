@@ -17,8 +17,8 @@ export default function Navbar() {
   =============================== */
 
   useEffect(() => {
-    if (user?._id) {
-      socket.emit("registerUser", user._id);
+    if (user?.id) {
+      socket.emit("registerUser", user.id);
     }
   }, [user]);
 

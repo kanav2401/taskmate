@@ -2,6 +2,21 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+/* ===============================
+   SHARED COOKIE CONFIG
+   ——————————————————
+   Backend (Render) is always HTTPS.
+   Frontend (localhost / Vercel) is always a DIFFERENT origin.
+   Cross-origin cookies require: sameSite:"none" + secure:true
+=============================== */
+
+const cookieConfig = {
+  httpOnly: true,
+  secure: true,          // Render is HTTPS — required when sameSite is "none"
+  sameSite: "none",      // Required for cross-origin cookie sending
+  path: "/",
+};
+
 /* Generate Tokens */
 const generateAccessToken = (user) => {
   return jwt.sign(
@@ -61,29 +76,19 @@ export const login = async (req, res) => {
     const refreshToken = generateRefreshToken(user);
 
     res
-  .cookie("accessToken", accessToken, {
-    httpOnly: true,
-    secure: false,        // keep false in local
-    sameSite: "lax",      // important
-    path: "/",            // 🔥 add this
-  })
-  .cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-    path: "/",            // 🔥 add this
-  })
-  .json({
-    message: "Login successful",
-    user: {
-      id: user._id,
-      name: user.name,
-      role: user.role,
-      isBlocked: user.isBlocked,
-    },
-  });
+      .cookie("accessToken", accessToken, cookieConfig)
+      .cookie("refreshToken", refreshToken, cookieConfig)
+      .json({
+        message: "Login successful",
+        user: {
+          id: user._id,
+          name: user.name,
+          role: user.role,
+          isBlocked: user.isBlocked,
+        },
+      });
   } catch (error) {
-    console.error("LOGIN ERROR:", error); // 🔥 this shows real backend error
+    console.error("LOGIN ERROR:", error);
     res.status(500).json({ message: "Login failed" });
   }
 };
@@ -103,12 +108,7 @@ export const refresh = (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES_IN || "15m" }
     );
 
-    res.cookie("accessToken", newAccessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-    });
-
+    res.cookie("accessToken", newAccessToken, cookieConfig);
     res.json({ message: "Token refreshed" });
   } catch (error) {
     console.error("REFRESH ERROR:", error);
@@ -119,7 +119,7 @@ export const refresh = (req, res) => {
 /* ================= LOGOUT ================= */
 export const logout = (req, res) => {
   res
-    .clearCookie("accessToken")
-    .clearCookie("refreshToken")
+    .clearCookie("accessToken", cookieConfig)
+    .clearCookie("refreshToken", cookieConfig)
     .json({ message: "Logged out" });
 };

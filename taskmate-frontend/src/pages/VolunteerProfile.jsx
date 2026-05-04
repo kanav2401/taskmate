@@ -44,14 +44,14 @@ export default function VolunteerProfile() {
   return (
     <div className="min-h-screen bg-background pt-24 pb-12 px-4 flex items-start justify-center">
       <div className="w-full max-w-2xl">
-        
+
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-6 group border-none bg-transparent">
            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Back
         </button>
 
         <div className="glass-card rounded-[2rem] p-8 md:p-12 relative overflow-hidden border-none shadow-2xl">
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
-            
+
             <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8 border-b border-border pb-8 mb-8">
                 <div className="w-32 h-32 rounded-3xl bg-secondary flex items-center justify-center border border-border shrink-0 shadow-inner relative">
                     <span className="text-5xl font-bold text-primary uppercase">{volunteer.name?.charAt(0)}</span>
@@ -80,7 +80,6 @@ export default function VolunteerProfile() {
                         </div>
                         <p className="text-sm text-muted-foreground">Based on {volunteer.totalRatings || 0} client reviews</p>
                     </div>
-                    {/* Reuse existing component, but might need style tweaks if it relies on old CSS */}
                     <div className="text-3xl tracking-widest text-amber-500">
                         <RatingDisplay rating={volunteer.averageRating} count={volunteer.totalRatings} />
                     </div>

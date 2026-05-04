@@ -12,20 +12,17 @@ const deadlineChecker = async () => {
       });
 
       for (const task of expiredTasks) {
-        // Mark task overdue
+
         task.status = "overdue";
         await task.save();
 
-        // Get volunteer
         const volunteer = await User.findById(task.volunteer);
 
         if (!volunteer) continue;
 
-        // Increase strike count
         volunteer.blockCount += 1;
         volunteer.isBlocked = true;
 
-        // Permanent ban after 3 strikes
         if (volunteer.blockCount >= 3) {
           volunteer.isPermanentlyBlocked = true;
         }
@@ -39,7 +36,7 @@ const deadlineChecker = async () => {
     } catch (error) {
       console.log("Deadline checker error:", error.message);
     }
-  }, 60000); // runs every 1 minute
+  }, 60000); 
 };
 
 export default deadlineChecker;

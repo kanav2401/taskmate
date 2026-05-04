@@ -17,14 +17,13 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
     setMessage("");
-    
+
     try {
       const res = await loginUser(form);
       if (res.user) {
-        // ✅ Save user (cookie auth system)
+
         setUser(res.user);
 
-        // Redirect based on role
         if (res.user.role === "admin") navigate("/admin");
         else if (res.user.role === "client") navigate("/client-dashboard");
         else navigate("/volunteer-dashboard");
@@ -42,12 +41,10 @@ export default function Login() {
 
   return (
     <div className="min-h-screen w-full flex bg-background">
-      
-      {/* LEFT PANEL - BRANDING */}
+
       <div className="hidden lg:flex w-1/2 relative bg-background border-r border-white/5 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-blue-500/20 z-0" />
-        
-        {/* Decorative Elements */}
+
         <div className="absolute top-0 left-0 w-full h-full z-10 opacity-30">
           <div className="absolute top-[20%] left-[10%] w-72 h-72 bg-primary rounded-full mix-blend-screen filter blur-[100px] animate-pulse" />
           <div className="absolute bottom-[20%] right-[10%] w-72 h-72 bg-blue-500 rounded-full mix-blend-screen filter blur-[100px] animate-pulse delay-1000" />
@@ -58,7 +55,7 @@ export default function Login() {
             <img src={logoImage} alt="TaskMate Logo" className="h-10 w-auto object-contain rounded-xl shadow-xl" />
             <span className="text-2xl font-bold tracking-tight text-foreground">TaskMate</span>
           </Link>
-          
+
           <div className="mb-20">
             <h1 className="text-5xl font-bold text-foreground mb-6 leading-tight tracking-tight">
               Welcome back to <br/> your <span className="brand-text-gradient">workspace.</span>
@@ -67,7 +64,7 @@ export default function Login() {
               Log in to manage your tasks, connect with peers, and track your progress securely.
             </p>
           </div>
-          
+
           <div className="flex items-center gap-4">
              <div className="flex -space-x-4">
                 {[...Array(4)].map((_, i) => (
@@ -81,10 +78,8 @@ export default function Login() {
         </div>
       </div>
 
-      {/* RIGHT PANEL - FORM */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 relative z-10">
-        
-        {/* Mobile Header */}
+
         <div className="absolute top-8 left-8 lg:hidden">
           <Link to="/" className="flex items-center gap-2 w-fit">
             <img src={logoImage} alt="TaskMate Logo" className="h-8 w-auto object-contain rounded-lg shadow-lg" />
@@ -93,7 +88,7 @@ export default function Login() {
         </div>
 
         <div className="w-full max-w-md space-y-8">
-          
+
           <div className="space-y-3">
             <h2 className="text-3xl font-bold tracking-tight text-foreground">Sign in</h2>
             <p className="text-muted-foreground">Enter your email and password below to access your account</p>
@@ -107,7 +102,7 @@ export default function Login() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Email</label>
@@ -169,7 +164,7 @@ export default function Login() {
               Sign up
             </Link>
           </p>
-          
+
         </div>
       </div>
     </div>

@@ -4,8 +4,7 @@ export default function AboutUs() {
   return (
     <div className="min-h-screen py-24 bg-background">
       <div className="container mx-auto px-4 max-w-5xl">
-        
-        {/* Header */}
+
         <div className="text-center mb-20 space-y-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
              Our Story
@@ -18,7 +17,6 @@ export default function AboutUs() {
           </p>
         </div>
 
-        {/* Vision & Mission Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-24">
           <div className="glass-card p-10 rounded-[2rem] bg-gradient-to-br from-primary/5 to-transparent border border-primary/10">
             <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center mb-6">
@@ -29,7 +27,7 @@ export default function AboutUs() {
               To empower students globally by creating a seamless, transparent platform where peer-to-peer collaboration and task execution is secure, fair, and mutually beneficial.
             </p>
           </div>
-          
+
           <div className="glass-card p-10 rounded-[2rem] bg-gradient-to-br from-blue-500/5 to-transparent border border-blue-500/10">
             <div className="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-6">
               <Shield className="w-7 h-7 text-blue-500"/>
@@ -46,7 +44,7 @@ export default function AboutUs() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground border-none">Our Core Values</h2>
           </div>
-          
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { icon: <Shield className="w-6 h-6"/>, title: "Trust", desc: "Every transaction is secured in escrow." },

@@ -12,8 +12,6 @@ import complaintRoutes from "./routes/complaintRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 
-
-
 const app = express();
 
 const allowedOrigins = [
@@ -24,7 +22,7 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (mobile apps, curl, etc.)
+
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
@@ -38,7 +36,6 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// 🔥 Serve uploaded files
 app.use("/uploads", express.static("uploads"));
 
 app.use("/api/auth", authRoutes);
@@ -51,8 +48,6 @@ app.use("/api/complaints",complaintRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/contact", contactRoutes);
 
-// 🔍 Debug endpoint — visit /api/debug/cors to verify deployed CORS config
-// Remove this after confirming everything works
 app.get("/api/debug/cors", (req, res) => {
   res.json({
     allowedOrigins,

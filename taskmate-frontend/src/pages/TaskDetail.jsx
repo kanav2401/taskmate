@@ -76,19 +76,17 @@ export default function TaskDetail() {
   return (
     <div className="min-h-screen bg-background pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-8">
-        
-        {/* Navigation & Header */}
+
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-6 group border-none bg-transparent">
            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
         </button>
 
         <div className="grid lg:grid-cols-3 gap-8">
-            
-            {/* MAIN CONTENT AREA */}
+
             <div className="lg:col-span-2 space-y-6">
                 <div className="glass-card rounded-3xl p-8 lg:p-10 border-none relative overflow-hidden">
                     <div className="absolute right-0 top-0 p-8 opacity-5 pointer-events-none"><FileText className="w-48 h-48"/></div>
-                    
+
                     <div className="flex items-center gap-3 mb-6 relative z-10">
                         <span className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase border ${getStatusColor(task.status)}`}>
                             {task.status}
@@ -118,7 +116,6 @@ export default function TaskDetail() {
                     </div>
                 </div>
 
-                {/* ESCROW/PAYMENT STATUS IF APPLICABLE */}
                 {task.paymentStatus && (
                     <div className="bg-green-500/5 border border-green-500/20 rounded-2xl p-6 flex items-center gap-4">
                         <CheckCircle2 className="w-8 h-8 text-green-500" />
@@ -130,10 +127,8 @@ export default function TaskDetail() {
                 )}
             </div>
 
-            {/* SIDEBAR */}
             <div className="space-y-6">
-                
-                {/* Client Box */}
+
                 <div className="glass-card rounded-3xl p-6 border-none">
                     <h3 className="text-lg font-bold text-foreground mb-4 border-b border-white/5 pb-2 shadow-none">Client Overview</h3>
                     <div className="flex items-start gap-4 mb-4">
@@ -150,7 +145,6 @@ export default function TaskDetail() {
                     </div>
                 </div>
 
-                {/* Volunteer Box */}
                 {task.volunteer && (
                     <div className="glass-card rounded-3xl p-6 border-none">
                         <h3 className="text-lg font-bold text-foreground mb-4 border-b border-white/5 pb-2 shadow-none">Assigned Volunteer</h3>
@@ -169,7 +163,6 @@ export default function TaskDetail() {
                     </div>
                 )}
 
-                {/* CHAT ACTION BUTTON */}
                 {canChat && (
                     <button 
                         onClick={() => setShowChat(true)}
@@ -184,7 +177,6 @@ export default function TaskDetail() {
 
       </div>
 
-      {/* CHAT MODAL/DRAWER OVERLAY */}
       {showChat && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm mt-16">
             <div className="w-full max-w-2xl bg-secondary/90 border border-border rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">

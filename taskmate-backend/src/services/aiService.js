@@ -3,10 +3,6 @@ dotenv.config();
 
 import Groq from "groq-sdk";
 
-/* ===============================
-   INITIALIZE GROQ CLIENT
-=============================== */
-
 if (!process.env.GROQ_API_KEY) {
   console.error("❌ GROQ_API_KEY missing in .env file");
 }
@@ -15,18 +11,9 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-/* ===============================
-   HELPER FUNCTION
-=============================== */
-
 const extractText = (completion) => {
   return completion?.choices?.[0]?.message?.content?.trim() || "";
 };
-
-
-/* ===============================
-   AI TASK DESCRIPTION IMPROVER
-=============================== */
 
 export const improveTaskDescription = async (description) => {
 
@@ -64,7 +51,6 @@ ${description}
 
     console.log("🟢 AI Improved Text:", improved);
 
-    // Prevent returning same text
     if (!improved || improved.toLowerCase() === description.toLowerCase()) {
       return `Develop a professional task based on this description: ${description}`;
     }
@@ -80,11 +66,6 @@ ${description}
   }
 
 };
-
-
-/* ===============================
-   AI TOXIC / SCAM MESSAGE DETECTION
-=============================== */
 
 export const detectToxicMessage = async (message) => {
 
@@ -142,11 +123,6 @@ Message:
   }
 
 };
-
-
-/* ===============================
-   AI COMPLAINT ANALYZER
-=============================== */
 
 export const analyzeComplaint = async (text) => {
 

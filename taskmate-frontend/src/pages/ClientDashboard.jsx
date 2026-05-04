@@ -19,7 +19,6 @@ export default function ClientDashboard() {
   const [loading, setLoading] = useState(true);
   const [activeChat, setActiveChat] = useState(null);
 
-  // Pagination
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const [total, setTotal] = useState(0);
@@ -96,8 +95,7 @@ export default function ClientDashboard() {
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        
-        {/* HEADER */}
+
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">Client Workspace</h1>
@@ -108,7 +106,6 @@ export default function ClientDashboard() {
           </Link>
         </div>
 
-        {/* STATS OVERVIEW - Optional visual enhancement */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="glass-card p-6 rounded-2xl flex items-center gap-4 border-none">
              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><Target className="w-6 h-6"/></div>
@@ -124,7 +121,6 @@ export default function ClientDashboard() {
           </div>
         </div>
 
-        {/* TASKS LIST */}
         <div className="glass-card rounded-3xl p-6 lg:p-8 border-none space-y-6">
           <div className="flex items-center justify-between border-b border-white/5 pb-4">
             <h2 className="text-xl font-bold text-foreground border-none">Your Tasks</h2>
@@ -146,7 +142,7 @@ export default function ClientDashboard() {
             <div className="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {tasks.map(task => (
                 <div key={task._id} className="group bg-secondary/30 border border-white/5 hover:border-primary/20 hover:bg-white/5 rounded-2xl p-6 transition-all duration-300 flex flex-col h-full">
-                  
+
                   <div className="flex justify-between items-start mb-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border ${getStatusColor(task.status)}`}>
                       {task.status}
@@ -156,7 +152,7 @@ export default function ClientDashboard() {
 
                   <h3 className="text-lg font-bold text-foreground mb-2 line-clamp-1 border-none">{task.title}</h3>
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-6 flex-grow">{task.description}</p>
-                  
+
                   {task.volunteer && (
                     <div className="bg-background/50 rounded-xl p-3 mb-4 border border-white/5">
                       <div className="flex items-center justify-between p-1">

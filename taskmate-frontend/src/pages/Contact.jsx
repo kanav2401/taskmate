@@ -15,7 +15,6 @@ export default function Contact() {
     setError("");
     setSuccess("");
 
-    /* ---------- CLIENT-SIDE VALIDATION ---------- */
     if (!name.trim() || !email.trim() || !message.trim()) {
       setError("All fields are required.");
       return;
@@ -27,7 +26,6 @@ export default function Contact() {
       return;
     }
 
-    /* ---------- SUBMIT ---------- */
     try {
       setLoading(true);
 
@@ -57,7 +55,7 @@ export default function Contact() {
   return (
     <div className="min-h-screen py-24 bg-background">
       <div className="container mx-auto px-4 max-w-5xl">
-        
+
         <div className="text-center mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
              Get in Touch
@@ -69,7 +67,7 @@ export default function Contact() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-          
+
           {/* Contact Info */}
           <div className="space-y-8">
             <div className="glass-card p-8 rounded-2xl relative overflow-hidden">
@@ -77,7 +75,7 @@ export default function Contact() {
                 <Mail className="w-32 h-32" />
               </div>
               <h3 className="text-2xl font-semibold mb-6 text-foreground relative z-10 border-none">Contact Information</h3>
-              
+
               <div className="space-y-6 relative z-10">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
@@ -190,7 +188,7 @@ export default function Contact() {
               </button>
             </form>
           </div>
-          
+
         </div>
       </div>
     </div>

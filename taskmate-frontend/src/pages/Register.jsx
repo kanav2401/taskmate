@@ -25,7 +25,7 @@ export default function Register() {
       if (res.message) {
         setMessage(res.message);
         setSuccess(true);
-        setTimeout(() => navigate('/login'), 2000); // Redirect after success
+        setTimeout(() => navigate('/login'), 2000); 
       } else {
         setMessage("Registration failed. Please try again.");
       }
@@ -38,12 +38,10 @@ export default function Register() {
 
   return (
     <div className="min-h-screen w-full flex bg-background">
-      
-      {/* LEFT PANEL - BRANDING */}
+
       <div className="hidden lg:flex w-1/2 relative bg-background border-r border-white/5 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 via-background to-purple-600/20 z-0" />
-        
-        {/* Decorative Elements */}
+
         <div className="absolute top-0 left-0 w-full h-full z-10 opacity-30">
           <div className="absolute top-[30%] left-[20%] w-72 h-72 bg-blue-500 rounded-full mix-blend-screen filter blur-[100px] animate-pulse" />
           <div className="absolute bottom-[10%] right-[20%] w-72 h-72 bg-purple-500 rounded-full mix-blend-screen filter blur-[100px] animate-pulse delay-700" />
@@ -54,7 +52,7 @@ export default function Register() {
             <img src={logoImage} alt="TaskMate Logo" className="h-10 w-auto object-contain rounded-xl shadow-xl" />
             <span className="text-2xl font-bold tracking-tight text-foreground">TaskMate</span>
           </Link>
-          
+
           <div className="mb-20">
             <h1 className="text-5xl font-bold text-foreground mb-6 leading-tight tracking-tight">
               Start your journey <br/> with us <span className="brand-text-gradient">today.</span>
@@ -63,7 +61,7 @@ export default function Register() {
               Create a free account to get help with your tasks or offer your skills to peers.
             </p>
           </div>
-          
+
           <div className="flex items-center gap-4">
              <div className="flex -space-x-4">
                 {[...Array(3)].map((_, i) => (
@@ -77,9 +75,8 @@ export default function Register() {
         </div>
       </div>
 
-      {/* RIGHT PANEL - FORM */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 relative z-10">
-        
+
         <div className="absolute top-8 left-8 lg:hidden">
           <Link to="/" className="flex items-center gap-2 w-fit">
             <img src={logoImage} alt="TaskMate Logo" className="h-8 w-auto object-contain rounded-lg shadow-lg" />
@@ -88,7 +85,7 @@ export default function Register() {
         </div>
 
         <div className="w-full max-w-md space-y-8">
-          
+
           <div className="space-y-3">
             <h2 className="text-3xl font-bold tracking-tight text-foreground">Create an account</h2>
             <p className="text-muted-foreground">Enter your details below to get started</p>
@@ -102,9 +99,9 @@ export default function Register() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            
+
             <div className="space-y-4">
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">Full Name</label>
                 <div className="relative">
@@ -204,7 +201,7 @@ export default function Register() {
               Sign in
             </Link>
           </p>
-          
+
         </div>
       </div>
     </div>

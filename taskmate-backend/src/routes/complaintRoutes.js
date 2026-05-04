@@ -5,15 +5,9 @@ import Task from "../models/Task.js";
 import Notification from "../models/Notification.js";
 import { io, onlineUsers } from "../server.js";
 
-/* AI SERVICE */
 import { analyzeComplaint } from "../services/aiService.js";
 
 const router = express.Router();
-
-/* ======================
-CREATE COMPLAINT
-CLIENT OR VOLUNTEER
-====================== */
 
 router.post("/", authMiddleware, async (req, res) => {
 
@@ -29,21 +23,13 @@ return res.status(404).json({ message: "Task not found" });
 
 let complainAgainstUser = null;
 
-/* CLIENT complaining */
-
 if (req.user.role === "client") {
 complainAgainstUser = task.volunteer?._id;
 }
 
-/* VOLUNTEER complaining */
-
 if (req.user.role === "volunteer") {
 complainAgainstUser = task.client?._id;
 }
-
-/* ======================
-AI COMPLAINT ANALYSIS
-====================== */
 
 let aiData = {
 category: "",
@@ -69,10 +55,6 @@ console.log("AI ANALYSIS FAILED:", err);
 
 }
 
-/* ======================
-CREATE COMPLAINT
-====================== */
-
 const complaint = await Complaint.create({
 
 task: taskId,
@@ -91,10 +73,6 @@ aiSuggestedAction: aiData.suggestedAction,
 aiAnalyzed: true
 
 });
-
-/* ======================
-NOTIFY BOTH PARTIES
-====================== */
 
 const usersToNotify = [];
 if (task.client?._id) usersToNotify.push(task.client._id);
@@ -138,11 +116,6 @@ res.status(500).json({ message: "Complaint failed" });
 
 });
 
-/* ======================
-GET ALL COMPLAINTS
-ADMIN
-====================== */
-
 router.get("/", authMiddleware, async (req, res) => {
 
 try {
@@ -184,11 +157,6 @@ res.status(500).json({ message: "Failed to load complaints" });
 }
 
 });
-
-/* ======================
-DELETE COMPLAINT
-ADMIN
-====================== */
 
 router.delete("/:id", authMiddleware, async (req, res) => {
 

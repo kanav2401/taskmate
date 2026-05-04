@@ -4,7 +4,7 @@ export default function Terms() {
   return (
     <div className="min-h-screen py-24 bg-background">
       <div className="container mx-auto px-4 max-w-4xl">
-        
+
         <div className="text-center mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
              Legal
@@ -16,7 +16,7 @@ export default function Terms() {
         </div>
 
         <div className="glass-card rounded-3xl p-8 md:p-12 prose prose-invert max-w-none space-y-8">
-          
+
           <section className="space-y-4">
             <h2 className="text-2xl font-bold text-foreground border-none">1. Platform Usage Rules</h2>
             <p className="text-muted-foreground leading-relaxed">
@@ -44,7 +44,7 @@ export default function Terms() {
               TaskMate administrators reserve the right to review private messages and task details in the event of a dispute. We hold the absolute right to resolve disputes, issue refunds, or distribute escrowed funds based on the evidence provided by both parties.
             </p>
           </section>
-          
+
           <section className="space-y-4">
             <h2 className="text-2xl font-bold text-foreground border-none">5. Account Suspension Clauses</h2>
             <p className="text-muted-foreground leading-relaxed">

@@ -25,7 +25,6 @@ import ComplaintCenter from "./pages/ComplaintCenter";
 import WalletPage from "./pages/WalletPage";
 import AdminComplaints from "./pages/AdminComplaints";
 
-
 import { getUser } from "./utils/auth";
 
 function App() {
@@ -33,13 +32,10 @@ function App() {
 
   return (
     <div className="app-layout">
-      {/* TOP NAVBAR */}
       <Navbar />
 
-      {/* BLOCKED USER WARNING */}
       {user?.isBlocked && <BlockedBanner />}
 
-      {/* MAIN PAGE CONTENT */}
       <main className="app-content">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -125,11 +121,9 @@ element={<AdminComplaints/>}
 />
 <Route path="/wallet" element={<WalletPage />} />
 
-
         </Routes>
       </main>
 
-      {/* FOOTER ALWAYS AT BOTTOM */}
       <Footer />
     </div>
   );

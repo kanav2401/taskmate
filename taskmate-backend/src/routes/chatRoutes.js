@@ -6,9 +6,6 @@ import Task from "../models/Task.js";
 
 const router = express.Router();
 
-/* =========================
-   GET MESSAGES FOR TASK
-========================= */
 router.get("/:taskId", authMiddleware, async (req, res) => {
   try {
     const task = await Task.findById(req.params.taskId);
@@ -49,9 +46,6 @@ router.get("/:taskId", authMiddleware, async (req, res) => {
   }
 });
 
-/* =========================
-   SEND TEXT MESSAGE
-========================= */
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const { taskId, text, fileUrl } = req.body;
@@ -70,9 +64,6 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-/* =========================
-   FILE UPLOAD
-========================= */
 router.post(
   "/upload",
   authMiddleware,

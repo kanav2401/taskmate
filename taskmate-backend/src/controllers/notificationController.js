@@ -1,8 +1,5 @@
 import Notification from "../models/Notification.js";
 
-/* ===============================
-   GET MY NOTIFICATIONS
-=============================== */
 export const getMyNotifications = async (req, res) => {
   try {
     const notifications = await Notification.find({
@@ -15,9 +12,6 @@ export const getMyNotifications = async (req, res) => {
   }
 };
 
-/* ===============================
-   MARK AS READ
-=============================== */
 export const markAsRead = async (req, res) => {
   try {
     await Notification.findByIdAndUpdate(req.params.id, {

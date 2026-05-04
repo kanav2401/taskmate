@@ -14,7 +14,6 @@ import {
 } from "recharts";
 import { LayoutDashboard, AlertCircle, Users, CheckCircle, Target, ArrowRight, ShieldCheck, ShieldAlert, Lock, Unlock } from "lucide-react";
 
-// Theme-compatible colors
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
 
 export default function AdminDashboard() {
@@ -22,22 +21,20 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [tasks, setTasks] = useState([]);
 
-  /* PAGINATION STATES */
   const [userPage, setUserPage] = useState(1);
   const [userLimit, setUserLimit] = useState(8);
   const [userTotal, setUserTotal] = useState(0);
   const [userTotalPages, setUserTotalPages] = useState(1);
 
   const [taskPage, setTaskPage] = useState(1);
-  const [taskLimit, setTaskLimit] = useState(10); // unused for now but kept for API match
-  // ... ommiting full task pagination UI for brevity, focusing on charts & user table
+  const [taskLimit, setTaskLimit] = useState(10); 
 
   useEffect(() => { loadData(); }, [userPage, userLimit, taskPage, taskLimit]);
 
   const loadData = async () => {
     const statsData = await getAdminStats();
     const usersData = await getAllUsers(userPage, userLimit);
-    const tasksData = await getAllTasksAdmin(taskPage, 1000); // load more for charts
+    const tasksData = await getAllTasksAdmin(taskPage, 1000); 
 
     setStats(statsData || {});
     setUsers(usersData?.data || []);
@@ -77,7 +74,6 @@ export default function AdminDashboard() {
     loadData();
   };
 
-  /* ANALYTICS DATA */
   const tasksPerDay = Object.values(
     tasks.reduce((acc, task) => {
       const date = new Date(task.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
@@ -85,7 +81,7 @@ export default function AdminDashboard() {
       acc[date].count += 1;
       return acc;
     }, {})
-  ).slice(-14); // Last 14 days
+  ).slice(-14); 
 
   let cumulative = 0;
   const growthTrend = tasksPerDay.map(item => {
@@ -106,7 +102,6 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
 
-        {/* HEADER */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
             <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-2xl brand-gradient flex items-center justify-center text-white"><LayoutDashboard className="w-6 h-6"/></div>
@@ -120,7 +115,6 @@ export default function AdminDashboard() {
             </Link>
         </div>
 
-        {/* KPI CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="glass-card rounded-2xl p-6 flex items-center gap-4 border-none relative overflow-hidden">
                 <div className="absolute -right-4 -bottom-4 opacity-5"><Users className="w-24 h-24"/></div>
@@ -139,7 +133,6 @@ export default function AdminDashboard() {
             </div>
         </div>
 
-        {/* CHARTS GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
             <div className="glass-card rounded-3xl p-6 border-none">
                 <h3 className="text-lg font-bold text-foreground mb-6 shadow-none border-none">Task Volume (Last 14 Days)</h3>
@@ -186,7 +179,6 @@ export default function AdminDashboard() {
             </div>
         </div>
 
-        {/* USERS TABLE */}
         <div className="glass-card rounded-[2rem] border-none overflow-hidden mt-8">
             <div className="p-6 border-b border-white/5 flex justify-between items-center bg-secondary/30">
                 <h2 className="text-xl font-bold text-foreground shadow-none border-none m-0">User Directory</h2>
@@ -259,7 +251,7 @@ export default function AdminDashboard() {
                     </tbody>
                 </table>
             </div>
-            
+
             <div className="p-6 border-t border-white/5">
                 <Pagination page={userPage} totalPages={userTotalPages} total={userTotal} limit={userLimit} setPage={setUserPage} setLimit={setUserLimit} />
             </div>

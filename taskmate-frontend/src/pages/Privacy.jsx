@@ -4,7 +4,7 @@ export default function Privacy() {
   return (
     <div className="min-h-screen py-24 bg-background">
       <div className="container mx-auto px-4 max-w-4xl">
-        
+
         <div className="text-center mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
              Legal
@@ -16,7 +16,7 @@ export default function Privacy() {
         </div>
 
         <div className="glass-card rounded-3xl p-8 md:p-12 prose prose-invert max-w-none space-y-8">
-          
+
           <section className="space-y-4">
             <h2 className="text-2xl font-bold text-foreground border-none">1. Data Collection</h2>
             <p className="text-muted-foreground leading-relaxed">
@@ -44,7 +44,7 @@ export default function Privacy() {
               We may employ third-party companies and individuals to facilitate our platform, provide the platform on our behalf, perform related services, or assist us in analyzing how our platform is used. These third parties have access to your personal data only to perform these tasks on our behalf and are obligated not to disclose or use it for any other purpose.
             </p>
           </section>
-          
+
           <section className="space-y-4">
             <h2 className="text-2xl font-bold text-foreground border-none">5. GDPR Compliance</h2>
             <p className="text-muted-foreground leading-relaxed">

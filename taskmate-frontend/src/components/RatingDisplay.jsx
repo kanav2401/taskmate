@@ -1,7 +1,7 @@
 import { Star, StarHalf } from "lucide-react";
 
 export default function RatingDisplay({ rating = 0, count = 0 }) {
-  // Calculate full, half, and empty stars
+
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 >= 0.5;
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);

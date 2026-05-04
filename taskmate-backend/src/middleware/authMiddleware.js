@@ -18,7 +18,6 @@ token,
 process.env.JWT_SECRET
 );
 
-/* 🔥 LOAD FULL USER */
 const user = await User.findById(decoded.id);
 
 if (!user) {
@@ -27,7 +26,6 @@ message: "User not found"
 });
 }
 
-/* 🔥 PASS COMPLETE USER */
 req.user = user;
 
 next();

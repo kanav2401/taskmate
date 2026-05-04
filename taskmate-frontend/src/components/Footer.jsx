@@ -7,8 +7,7 @@ export default function Footer() {
     <footer className="border-t border-white/10 bg-background pt-16 pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-16">
-          
-          {/* BRAND */}
+
           <div className="md:col-span-1 space-y-4">
             <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-3">
               <img src={logoImage} alt="TaskMate Logo" className="h-10 w-auto object-contain rounded-md shadow-lg" />
@@ -19,7 +18,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* PLATFORM LINKS */}
           <div>
             <h3 className="font-semibold text-foreground mb-4">Platform</h3>
             <ul className="space-y-3">
@@ -30,7 +28,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* SUPPORT */}
           <div>
             <h3 className="font-semibold text-foreground mb-4">Support</h3>
             <ul className="space-y-3">
@@ -41,7 +38,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* SOCIAL */}
           <div>
             <h3 className="font-semibold text-foreground mb-4">Connect</h3>
             <div className="flex items-center gap-4">

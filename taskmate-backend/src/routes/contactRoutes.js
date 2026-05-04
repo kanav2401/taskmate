@@ -3,16 +3,9 @@ import { sendEmail } from "../utils/emailService.js";
 
 const router = express.Router();
 
-/* ===============================
-   POST /api/contact
-   PUBLIC — No auth required
-=============================== */
-
 router.post("/", async (req, res) => {
   try {
     const { name, email, message } = req.body;
-
-    /* ---------- VALIDATION ---------- */
 
     if (!name || !email || !message) {
       return res.status(400).json({
@@ -20,15 +13,12 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Basic email format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         message: "Please provide a valid email address.",
       });
     }
-
-    /* ---------- SEND EMAIL TO ADMIN ---------- */
 
     const adminEmail = process.env.ADMIN_EMAIL || "sharmakanav53@gmail.com";
 

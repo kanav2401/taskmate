@@ -9,7 +9,6 @@ router.post("/login", login);
 router.post("/refresh", refresh);
 router.post("/logout", logout);
 
-// 🔥 ADD THIS ROUTE
 router.get("/me", authMiddleware, (req, res) => {
   res.status(200).json(req.user);
 });

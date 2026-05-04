@@ -76,7 +76,7 @@ export default function WalletPage() {
   return (
     <div className="min-h-screen bg-background pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-8">
-        
+
         <div className="flex items-center gap-3 mb-8">
             <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary"><Wallet className="w-6 h-6"/></div>
             <div>
@@ -85,11 +85,10 @@ export default function WalletPage() {
             </div>
         </div>
 
-        {/* BALANCE CARD */}
         <div className="relative glass-card rounded-[2rem] p-8 md:p-10 border-none overflow-hidden">
             <div className="absolute inset-0 brand-gradient opacity-10 pointer-events-none" />
             <div className="absolute -top-32 -right-32 w-64 h-64 bg-primary/20 rounded-full blur-[100px] pointer-events-none" />
-            
+
             <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                 <div>
                     <h3 className="text-muted-foreground font-medium mb-2 flex items-center gap-2">Available Balance</h3>
@@ -114,7 +113,6 @@ export default function WalletPage() {
             </div>
         </div>
 
-        {/* TRANSACTIONS SECTION */}
         <div className="glass-card rounded-3xl p-6 lg:p-8 border-none mt-12">
             <div className="flex items-center gap-2 border-b border-border pb-6 mb-6">
                 <History className="w-5 h-5 text-primary" />

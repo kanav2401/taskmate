@@ -12,19 +12,11 @@ export default function Navbar() {
   const user = getUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  /* ===============================
-     REGISTER USER FOR NOTIFICATIONS
-  =============================== */
-
   useEffect(() => {
     if (user?.id) {
       socket.emit("registerUser", user.id);
     }
   }, [user]);
-
-  /* ===============================
-     LOGOUT
-  =============================== */
 
   const handleLogout = async () => {
     await fetch(`${BASE_URL}/api/auth/logout`, {
@@ -37,16 +29,11 @@ export default function Navbar() {
     window.location.reload();
   };
 
-  /* ===============================
-     UI
-  =============================== */
-
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          
-          {/* LOGO */}
+
           <div className="flex-shrink-0 flex items-center gap-2">
             <Link to="/" className="flex items-center gap-2 transition-transform hover:scale-105">
               <img src={logoImage} alt="TaskMate Logo" className="h-9 w-auto object-contain rounded-md shadow-lg" />
@@ -54,11 +41,9 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* DESKTOP LINKS */}
           <div className="hidden md:flex flex-1 items-center justify-center gap-6">
             <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Home</Link>
-            
-            {/* VOLUNTEER LINKS */}
+
             {isLoggedIn() && user?.role === "volunteer" && (
               <>
                 <Link to="/browse" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"><Search className="w-4 h-4"/> Browse Tasks</Link>
@@ -66,12 +51,10 @@ export default function Navbar() {
               </>
             )}
 
-            {/* CLIENT LINKS */}
             {isLoggedIn() && user?.role === "client" && (
               <Link to="/client-dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"><LayoutDashboard className="w-4 h-4"/> Dashboard</Link>
             )}
 
-            {/* ADMIN LINK */}
             {isLoggedIn() && user?.role === "admin" && (
               <Link to="/admin" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4"/> Admin
@@ -79,10 +62,9 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* RIGHT SIDE (AUTH & NOTIFICATIONS) */}
           <div className="hidden md:flex items-center gap-4">
             {isLoggedIn() && <NotificationBell />}
-            
+
             {!isLoggedIn() ? (
               <div className="flex items-center gap-3">
                 <Link to="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2">Log in</Link>
@@ -107,7 +89,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* MOBILE MENU BUTTON */}
           <div className="flex md:hidden items-center gap-4">
             {isLoggedIn() && <NotificationBell />}
             <button
@@ -120,12 +101,11 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* MOBILE MENU */}
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-white/10 bg-background/95 backdrop-blur-xl absolute top-16 left-0 w-full shadow-2xl animate-accordion-down">
           <div className="flex flex-col space-y-4 p-6">
             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-foreground">Home</Link>
-            
+
             {isLoggedIn() && user?.role === "volunteer" && (
               <>
                 <Link to="/browse" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-foreground flex items-center gap-2"><Search className="w-5 h-5 text-primary"/> Browse Tasks</Link>

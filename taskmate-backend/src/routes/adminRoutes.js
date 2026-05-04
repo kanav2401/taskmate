@@ -13,32 +13,17 @@ import {
 
 const router = express.Router();
 
-/* =====================================
-   PROTECTED ADMIN ROUTES
-===================================== */
 router.use(authMiddleware);
 router.use(adminMiddleware);
 
-/* =====================================
-   ANALYTICS
-===================================== */
 router.get("/stats", getAdminStats);
 
-/* =====================================
-   USERS
-===================================== */
 router.get("/users", getAllUsers);
 router.put("/ban/:id", banUser);
 router.put("/unblock/:id", unblockUser);
 
-/* =====================================
-   TASKS
-===================================== */
 router.get("/tasks", getAllTasks);
 
-/* =====================================
-   FLAGGED CHAT MESSAGES (AI MODERATION)
-===================================== */
 router.get("/flagged-messages", getFlaggedMessages);
 
 export default router;

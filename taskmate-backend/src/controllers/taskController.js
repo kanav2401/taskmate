@@ -5,9 +5,7 @@ import { sendEmail } from "../utils/emailService.js";
 import { onlineUsers, io } from "../server.js";
 import { paginate } from "../utils/paginate.js";
 import Transaction from "../models/Transaction.js";
-/* ================= CLIENT ================= */
 
-// CREATE TASK
 export const createTask = async (req, res) => {
   if (req.user.role !== "client") {
     return res.status(403).json({ message: "Only clients can post tasks" });
@@ -30,7 +28,6 @@ export const createTask = async (req, res) => {
   }
 };
 
-// CLIENT DASHBOARD TASKS (PAGINATED)
 export const getClientTasks = async (req, res) => {
   if (req.user.role !== "client") {
     return res.status(403).json({ message: "Unauthorized" });
@@ -54,9 +51,6 @@ export const getClientTasks = async (req, res) => {
   }
 };
 
-/* ================= VOLUNTEER ================= */
-
-// VIEW OPEN TASKS (PAGINATED)
 export const getOpenTasks = async (req, res) => {
   if (req.user.role !== "volunteer") {
     return res.status(403).json({ message: "Only volunteers can view tasks" });
@@ -80,7 +74,6 @@ export const getOpenTasks = async (req, res) => {
   }
 };
 
-// ACCEPT TASK
 export const acceptTask = async (req, res) => {
   if (req.user.isBlocked) {
     return res.status(403).json({
@@ -137,7 +130,6 @@ export const acceptTask = async (req, res) => {
   }
 };
 
-// VOLUNTEER DASHBOARD TASKS (PAGINATED)
 export const getVolunteerTasks = async (req, res) => {
   if (req.user.role !== "volunteer") {
     return res.status(403).json({ message: "Unauthorized" });
@@ -160,8 +152,6 @@ export const getVolunteerTasks = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch volunteer tasks" });
   }
 };
-
-/* ================= TASK DETAIL ================= */
 
 export const getTaskById = async (req, res) => {
   try {
@@ -198,9 +188,6 @@ export const getTaskById = async (req, res) => {
   }
 };
 
-/* ================= SUBMISSION FLOW ================= */
-
-// SUBMIT TASK
 export const submitTask = async (req, res) => {
   if (req.user.isBlocked) {
     return res.status(403).json({
@@ -261,8 +248,6 @@ export const submitTask = async (req, res) => {
   }
 };
 
-/* ================= COMPLETE TASK ================= */
-
 export const completeTask = async (req, res) => {
   if (req.user.role !== "client") {
     return res.status(403).json({ message: "Only clients can complete tasks" });
@@ -298,7 +283,6 @@ if (task.paymentStatus === "funded") {
   });
 }
 
-    /* ========== NOTIFY VOLUNTEER ========== */
     const volunteerId = task.volunteer?._id || task.volunteer;
     if (volunteerId) {
       await Notification.create({
@@ -325,7 +309,7 @@ if (task.paymentStatus === "funded") {
     res.status(500).json({ message: "Completion failed" });
   }
 };
-/* ================= TRANSACTION ================= */
+
 export const fundTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -384,8 +368,6 @@ export const getMyTransactions = async (req, res) => {
   res.json(transactions);
 };
 
-/* ================= RATE TASK ================= */
-
 export const rateTask = async (req, res) => {
   if (req.user.role !== "client") {
     return res.status(403).json({ message: "Only clients can rate" });
@@ -423,7 +405,6 @@ export const rateTask = async (req, res) => {
 
     await volunteer.save();
 
-    /* ========== NOTIFY VOLUNTEER ========== */
     await Notification.create({
       user: task.volunteer,
       title: "New Rating Received",

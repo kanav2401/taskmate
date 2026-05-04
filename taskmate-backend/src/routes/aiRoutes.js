@@ -3,10 +3,6 @@ import { improveTaskDescription } from "../services/aiService.js";
 
 const router = express.Router();
 
-/* ===============================
-   IMPROVE TASK DESCRIPTION
-=============================== */
-
 router.post("/improve-task", async (req, res) => {
 
   try {

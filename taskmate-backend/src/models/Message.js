@@ -34,10 +34,6 @@ const messageSchema = new mongoose.Schema(
       default: false,
     },
 
-    /* ===============================
-       AI MODERATION FIELDS
-    =============================== */
-
     flagged: {
       type: Boolean,
       default: false,

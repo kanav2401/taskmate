@@ -10,17 +10,13 @@ export default function NotificationBell() {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  /* ================= LOAD ================= */
   useEffect(() => {
     if (!user?.id) return;
 
-    // 🔥 register user for realtime notifications
     socket.emit("registerUser", user.id);
 
-    // 🔥 load existing notifications
     loadNotifications();
 
-    // 🔥 realtime listener
     socket.on("newNotification", (data) => {
       console.log("🔥 NOTIFICATION RECEIVED:", data);
       setNotifications((prev) => [data, ...prev]);
@@ -29,7 +25,6 @@ export default function NotificationBell() {
     return () => socket.off("newNotification");
   }, [user?.id]);
 
-  /* ================= CLICK OUTSIDE ================= */
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -40,7 +35,6 @@ export default function NotificationBell() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  /* ================= FETCH NOTIFICATIONS ================= */
   const loadNotifications = async () => {
     try {
       const res = await fetch(`${API_URL}/notifications`, {
@@ -61,10 +55,8 @@ export default function NotificationBell() {
     }
   };
 
-  /* ================= UNREAD COUNT ================= */
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  /* ================= MARK READ ================= */
   const markRead = async (id, e) => {
     if (e) e.stopPropagation();
     try {
@@ -86,7 +78,6 @@ export default function NotificationBell() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* 🔔 BELL */}
       <button 
         onClick={() => setOpen(!open)}
         className={`relative p-2 rounded-full transition-colors flex items-center justify-center border-none ${open ? 'bg-secondary text-primary' : 'hover:bg-secondary/50 text-muted-foreground hover:text-foreground'}`}
@@ -99,10 +90,9 @@ export default function NotificationBell() {
         )}
       </button>
 
-      {/* 📦 PANEL */}
       {open && (
         <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-background/95 backdrop-blur-xl border border-border shadow-2xl rounded-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 flex flex-col max-h-[85vh]">
-          
+
           <div className="p-4 border-b border-white/5 flex items-center justify-between bg-secondary/30 shrink-0">
              <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg brand-gradient flex items-center justify-center text-white"><Bell className="w-4 h-4"/></div>
@@ -148,7 +138,7 @@ export default function NotificationBell() {
               ))
             )}
           </div>
-          
+
           <div className="p-2 border-t border-white/5 bg-secondary/10 shrink-0">
              <button onClick={() => setOpen(false)} className="w-full py-2 rounded-xl text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors border-none">
                  Close

@@ -22,9 +22,6 @@ export default function PostTask() {
     });
   };
 
-  /* ===============================
-     AI DESCRIPTION IMPROVER
-  =============================== */
   const improveWithAI = async () => {
     if (!form.description.trim()) {
       setError("Please write a draft description first before using AI.");
@@ -62,9 +59,6 @@ export default function PostTask() {
     }
   };
 
-  /* ===============================
-     POST TASK
-  =============================== */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setPosting(true);
@@ -87,7 +81,7 @@ export default function PostTask() {
   return (
     <div className="min-h-screen bg-background pt-24 pb-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
       <div className="w-full max-w-3xl">
-        
+
         <div className="text-center mb-10 relative">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/20 rounded-full blur-[100px] pointer-events-none" />
           <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl mb-4 relative z-10 border-none shadow-none">
@@ -100,7 +94,7 @@ export default function PostTask() {
 
         <div className="glass-card rounded-[2rem] p-8 md:p-12 relative overflow-hidden border-none shadow-2xl">
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
-          
+
           {(message || error) && (
             <div className={`p-4 rounded-xl mb-8 flex items-start gap-3 border ${message ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-destructive/10 border-destructive/20 text-destructive'}`}>
                 <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
@@ -109,8 +103,7 @@ export default function PostTask() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
-            
-            {/* TITLE */}
+
             <div className="space-y-2">
               <label className="text-sm font-semibold text-foreground flex items-center gap-2">
                  <Type className="w-4 h-4 text-primary" /> Task Title
@@ -125,7 +118,6 @@ export default function PostTask() {
               />
             </div>
 
-            {/* DESCRIPTION */}
             <div className="space-y-2 relative">
               <div className="flex items-center justify-between">
                   <label className="text-sm font-semibold text-foreground flex items-center gap-2">
@@ -152,7 +144,6 @@ export default function PostTask() {
               />
             </div>
 
-            {/* BUDGET & DEADLINE ROW */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-foreground flex items-center gap-2">

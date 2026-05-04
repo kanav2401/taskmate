@@ -31,10 +31,6 @@ const complaintSchema = new mongoose.Schema(
     default: "pending"
   },
 
-  /* ===============================
-     AI COMPLAINT ANALYSIS
-  =============================== */
-
   aiCategory: {
     type: String,
     default: ""

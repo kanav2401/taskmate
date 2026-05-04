@@ -2,22 +2,13 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-/* ===============================
-   SHARED COOKIE CONFIG
-   ——————————————————
-   Backend (Render) is always HTTPS.
-   Frontend (localhost / Vercel) is always a DIFFERENT origin.
-   Cross-origin cookies require: sameSite:"none" + secure:true
-=============================== */
-
 const cookieConfig = {
   httpOnly: true,
-  secure: true,          // Render is HTTPS — required when sameSite is "none"
-  sameSite: "none",      // Required for cross-origin cookie sending
+  secure: true,          
+  sameSite: "none",      
   path: "/",
 };
 
-/* Generate Tokens */
 const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, role: user.role },
@@ -34,7 +25,6 @@ const generateRefreshToken = (user) => {
   );
 };
 
-/* ================= REGISTER ================= */
 export const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -59,7 +49,6 @@ export const register = async (req, res) => {
   }
 };
 
-/* ================= LOGIN ================= */
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -93,7 +82,6 @@ export const login = async (req, res) => {
   }
 };
 
-/* ================= REFRESH ================= */
 export const refresh = (req, res) => {
   const token = req.cookies.refreshToken;
   if (!token)
@@ -116,7 +104,6 @@ export const refresh = (req, res) => {
   }
 };
 
-/* ================= LOGOUT ================= */
 export const logout = (req, res) => {
   res
     .clearCookie("accessToken", cookieConfig)

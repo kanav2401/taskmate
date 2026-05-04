@@ -4,9 +4,6 @@ import User from "../models/User.js";
 
 const router = express.Router();
 
-/* =========================================
-   GET USER PROFILE (FOR VOLUNTEER PAGE)
-========================================= */
 router.get("/:id", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
@@ -23,9 +20,6 @@ router.get("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-/* =========================================
-   REQUEST UNBLOCK
-========================================= */
 router.put("/request-unblock", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);

@@ -10,7 +10,6 @@ export default function BrowseTasks() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Pagination
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(9);
   const [total, setTotal] = useState(0);
@@ -75,12 +74,11 @@ export default function BrowseTasks() {
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-      
-      {/* HEADER SECTION */}
+
       <div className="relative mb-12 py-12 px-6 lg:px-12 rounded-[2rem] overflow-hidden border border-white/5 bg-secondary/30">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-blue-500/10 z-0" />
         <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/20 rounded-full blur-[100px]" />
-        
+
         <div className="relative z-10 max-w-3xl">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground mb-4 border-none">
             Find Your Next <span className="brand-text-gradient">Opportunity</span>
@@ -88,7 +86,7 @@ export default function BrowseTasks() {
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl">
             Browse through hundreds of open tasks posted by peers. Filter by category, budget, and pick tasks that match your skills.
           </p>
-          
+
           <div className="flex bg-background border border-border rounded-xl px-4 py-2 items-center shadow-sm max-w-xl focus-within:ring-2 focus-within:ring-primary/50 transition-all">
             <Search className="w-5 h-5 text-muted-foreground" />
             <input 
@@ -104,8 +102,7 @@ export default function BrowseTasks() {
       </div>
 
       <div className="max-w-7xl mx-auto space-y-8">
-        
-        {/* FILTERS & STATS */}
+
         <div className="flex flex-col sm:flex-row justify-between items-center bg-background/50 border border-white/5 backdrop-blur-md rounded-2xl p-4 sticky top-20 z-20 shadow-sm">
             <div className="text-muted-foreground font-medium mb-4 sm:mb-0">
                 Found <strong className="text-foreground">{total}</strong> open tasks
@@ -125,7 +122,6 @@ export default function BrowseTasks() {
             </div>
         </div>
 
-        {/* TASKS GRID */}
         {loading ? (
              <div className="py-20 flex justify-center items-center">
                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -142,7 +138,7 @@ export default function BrowseTasks() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {tasks.map(task => (
                 <div key={task._id} className="group glass-card rounded-3xl p-6 lg:p-8 flex flex-col h-full hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 border border-white/5">
-                  
+
                   <div className="flex justify-between items-start mb-6">
                     <div className="flex items-center gap-2">
                       <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold uppercase shrink-0">
@@ -159,11 +155,11 @@ export default function BrowseTasks() {
                   <h3 className="text-xl font-bold text-foreground mb-3 line-clamp-2 leading-snug shadow-none border-none group-hover:text-primary transition-colors cursor-pointer" onClick={() => navigate(`/task/${task._id}`)}>
                     {task.title}
                   </h3>
-                  
+
                   <p className="text-sm text-muted-foreground mb-6 line-clamp-3 flex-grow">
                     {task.description}
                   </p>
-                  
+
                   <div className="grid grid-cols-2 gap-3 mb-6">
                     <div className="flex items-center gap-2 text-sm text-foreground">
                         <IndianRupee className="w-4 h-4 text-primary" />
@@ -189,7 +185,6 @@ export default function BrowseTasks() {
             </div>
         )}
 
-        {/* PAGINATION */}
         {!loading && total > 0 && (
           <div className="pt-8">
             <Pagination page={page} totalPages={totalPages} total={total} limit={limit} setPage={setPage} setLimit={setLimit} />

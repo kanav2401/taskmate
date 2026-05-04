@@ -59,7 +59,7 @@ export default function FAQ() {
                 {group.questions.map((item, index) => {
                   const key = `${categoryId}-${index}`;
                   const isOpen = openItems[key];
-                  
+
                   return (
                     <div 
                       key={index} 
@@ -72,7 +72,7 @@ export default function FAQ() {
                         <span className="text-lg font-medium text-foreground pr-8">{item.q}</span>
                         <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                       </button>
-                      
+
                       <div 
                         className={`transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}
                       >

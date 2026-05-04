@@ -4,8 +4,7 @@ import { AlertTriangle, ArrowRight } from "lucide-react";
 export default function BlockedBanner() {
   return (
     <div className="bg-destructive/10 border-l-4 border-destructive text-destructive px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative overflow-hidden">
-      
-      {/* Decorative background element */}
+
       <div className="absolute top-0 right-0 w-32 h-32 bg-destructive/10 rounded-full blur-[50px] pointer-events-none" />
 
       <div className="flex items-start sm:items-center gap-3 relative z-10">

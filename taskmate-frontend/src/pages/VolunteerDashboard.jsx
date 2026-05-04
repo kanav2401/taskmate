@@ -15,7 +15,6 @@ export default function VolunteerDashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Pagination
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
   const [total, setTotal] = useState(0);
@@ -73,7 +72,7 @@ export default function VolunteerDashboard() {
     try {
         const res = await requestUnblock();
         alert(res.message);
-        fetchUser(); // Refresh user status
+        fetchUser(); 
     } catch(err) { console.error(err); }
   };
 
@@ -99,11 +98,10 @@ export default function VolunteerDashboard() {
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
 
-        {/* PROFILE IDENTIFIER */}
         <div className="glass-card rounded-3xl p-8 border-none relative overflow-hidden">
           <div className="absolute right-0 top-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
           <div className="absolute left-0 bottom-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
-          
+
           <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div className="flex items-center gap-6">
               <div className="w-20 h-20 rounded-2xl brand-gradient flex items-center justify-center text-white text-3xl font-bold uppercase shadow-xl">
@@ -128,7 +126,6 @@ export default function VolunteerDashboard() {
           </div>
         </div>
 
-        {/* ALERTS */}
         {user?.isPermanentlyBlocked ? (
            <div className="bg-destructive/10 border border-destructive/20 rounded-2xl p-6 flex items-start gap-4">
               <AlertCircle className="w-8 h-8 text-destructive flex-shrink-0" />
@@ -152,7 +149,6 @@ export default function VolunteerDashboard() {
            </div>
         ) : null}
 
-        {/* ACTIVE TASKS */}
         <div className="glass-card rounded-3xl p-6 lg:p-8 border-none space-y-6">
           <div className="flex items-center justify-between border-b border-white/5 pb-4">
             <h2 className="text-xl font-bold text-foreground border-none">My Accepted Tasks</h2>
@@ -178,7 +174,7 @@ export default function VolunteerDashboard() {
             <div className="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {tasks.map(task => (
                 <div key={task._id} className="group bg-secondary/30 border border-white/5 hover:border-primary/20 hover:bg-white/5 rounded-2xl p-6 transition-all duration-300 flex flex-col h-full">
-                  
+
                   <div className="flex justify-between items-start mb-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border ${getStatusColor(task.status)}`}>
                       {task.status}
@@ -188,7 +184,7 @@ export default function VolunteerDashboard() {
 
                   <h3 className="text-lg font-bold text-foreground mb-2 line-clamp-1 border-none">{task.title}</h3>
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-grow">{task.description}</p>
-                  
+
                   <div className="grid grid-cols-2 gap-2 text-xs font-medium bg-background/50 rounded-lg p-3 mb-4">
                     <div className="text-muted-foreground">Client: <span className="text-foreground">{task.client?.name}</span></div>
                     <div className="text-muted-foreground">Deadline: <span className="text-foreground">{new Date(task.deadline).toLocaleDateString()}</span></div>

@@ -6,12 +6,11 @@ export default function Pagination({ page, totalPages, total, limit, setPage, se
   const start = (page - 1) * limit + 1;
   const end = Math.min(page * limit, total);
 
-  // Generate page numbers to show
   const getPageNumbers = () => {
     let pages = [];
     let startPage = Math.max(1, page - 1);
     let endPage = Math.min(totalPages, startPage + 2);
-    
+
     if (endPage - startPage < 2) {
         startPage = Math.max(1, endPage - 2);
     }
@@ -24,12 +23,11 @@ export default function Pagination({ page, totalPages, total, limit, setPage, se
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 w-full">
-      {/* Showing Info & Page Size */}
       <div className="flex flex-col sm:flex-row items-center gap-4 text-sm text-muted-foreground w-full sm:w-auto text-center sm:text-left">
         <div className="bg-secondary/50 px-4 py-2 rounded-xl border border-border">
             Showing <strong className="text-foreground">{start}–{end}</strong> of <strong className="text-foreground">{total}</strong> results
         </div>
-        
+
         <div className="flex items-center gap-2 bg-secondary/50 px-4 py-1.5 rounded-xl border border-border">
           <span className="font-medium">Show:</span>
           <select
@@ -48,9 +46,8 @@ export default function Pagination({ page, totalPages, total, limit, setPage, se
         </div>
       </div>
 
-      {/* Page Navigation */}
       <div className="flex items-center gap-1.5 bg-secondary/30 p-1.5 rounded-2xl border border-border">
-        
+
         <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}

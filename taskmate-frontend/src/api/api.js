@@ -2,20 +2,12 @@ export const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 export const API_URL = `${BASE_URL}/api`;
 
-/* ========================================
-   COMMON FETCH OPTIONS
-======================================== */
-
 const defaultOptions = {
   credentials: "include",
   headers: {
     "Content-Type": "application/json",
   },
 };
-
-/* =========================
-   AUTH APIs
-========================= */
 
 export const loginUser = async (data) => {
   const res = await fetch(`${API_URL}/auth/login`, {
@@ -42,11 +34,6 @@ export const logoutUser = async () => {
   });
 };
 
-
-/* =========================
-   CLIENT APIs
-========================= */
-
 export const postTask = async (data) => {
   const res = await fetch(`${API_URL}/tasks`, {
     ...defaultOptions,
@@ -56,7 +43,6 @@ export const postTask = async (data) => {
 
   return res.json();
 };
-
 
 export const getClientTasks = async (page = 1, limit = 8) => {
   const res = await fetch(
@@ -70,7 +56,6 @@ export const getClientTasks = async (page = 1, limit = 8) => {
   return res.json();
 };
 
-
 export const completeTask = async (id) => {
   const res = await fetch(`${API_URL}/tasks/${id}/complete`, {
     ...defaultOptions,
@@ -79,7 +64,6 @@ export const completeTask = async (id) => {
 
   return res.json();
 };
-
 
 export const rateTask = async (id, rating, review) => {
   const res = await fetch(`${API_URL}/tasks/${id}/rate`, {
@@ -90,11 +74,6 @@ export const rateTask = async (id, rating, review) => {
 
   return res.json();
 };
-
-
-/* =========================
-   VOLUNTEER APIs
-========================= */
 
 export const getOpenTasks = async (page = 1, limit = 8) => {
   const res = await fetch(
@@ -108,7 +87,6 @@ export const getOpenTasks = async (page = 1, limit = 8) => {
   return res.json();
 };
 
-
 export const acceptTask = async (id) => {
   const res = await fetch(`${API_URL}/tasks/${id}/accept`, {
     ...defaultOptions,
@@ -117,7 +95,6 @@ export const acceptTask = async (id) => {
 
   return res.json();
 };
-
 
 export const getVolunteerTasks = async (page = 1, limit = 8) => {
   const res = await fetch(
@@ -131,7 +108,6 @@ export const getVolunteerTasks = async (page = 1, limit = 8) => {
   return res.json();
 };
 
-
 export const submitTask = async (id, note) => {
   const res = await fetch(`${API_URL}/tasks/${id}/submit`, {
     ...defaultOptions,
@@ -142,7 +118,6 @@ export const submitTask = async (id, note) => {
   return res.json();
 };
 
-
 export const requestUnblock = async () => {
   const res = await fetch(`${API_URL}/tasks/request-unblock`, {
     ...defaultOptions,
@@ -151,11 +126,6 @@ export const requestUnblock = async () => {
 
   return res.json();
 };
-
-
-/* =========================
-   TASK DETAIL
-========================= */
 
 export const getTaskById = async (id) => {
   const res = await fetch(`${API_URL}/tasks/${id}`, {
@@ -167,11 +137,6 @@ export const getTaskById = async (id) => {
   return res.json();
 };
 
-
-/* =========================
-   ADMIN APIs
-========================= */
-
 export const getAdminStats = async () => {
   const res = await fetch(`${API_URL}/admin/stats`, {
     ...defaultOptions,
@@ -180,7 +145,6 @@ export const getAdminStats = async () => {
 
   return res.json();
 };
-
 
 export const getAllUsers = async (page = 1, limit = 8) => {
   const res = await fetch(
@@ -194,7 +158,6 @@ export const getAllUsers = async (page = 1, limit = 8) => {
   return res.json();
 };
 
-
 export const unblockUser = async (id) => {
   const res = await fetch(`${API_URL}/admin/unblock/${id}`, {
     ...defaultOptions,
@@ -203,7 +166,6 @@ export const unblockUser = async (id) => {
 
   return res.json();
 };
-
 
 export const getAllTasksAdmin = async (page = 1, limit = 8) => {
   const res = await fetch(
@@ -217,11 +179,6 @@ export const getAllTasksAdmin = async (page = 1, limit = 8) => {
   return res.json();
 };
 
-
-/* =========================
-   WALLET & ESCROW APIs
-========================= */
-
 export const fundTask = async (id) => {
   const res = await fetch(`${API_URL}/tasks/${id}/fund`, {
     ...defaultOptions,
@@ -231,7 +188,6 @@ export const fundTask = async (id) => {
   return res.json();
 };
 
-
 export const withdrawFunds = async () => {
   const res = await fetch(`${API_URL}/tasks/wallet/withdraw`, {
     ...defaultOptions,
@@ -240,7 +196,6 @@ export const withdrawFunds = async () => {
 
   return res.json();
 };
-
 
 export const getTransactions = async () => {
   const res = await fetch(
@@ -254,11 +209,6 @@ export const getTransactions = async () => {
   return res.json();
 };
 
-
-/* =========================
-   CHAT APIs
-========================= */
-
 export const getChatMessages = async (taskId) => {
   const res = await fetch(`${API_URL}/chat/${taskId}`, {
     ...defaultOptions,
@@ -267,7 +217,6 @@ export const getChatMessages = async (taskId) => {
 
   return res.json();
 };
-
 
 export const sendChatMessage = async (data) => {
   const res = await fetch(`${API_URL}/chat`, {
@@ -278,7 +227,6 @@ export const sendChatMessage = async (data) => {
 
   return res.json();
 };
-
 
 export const uploadChatFile = async (file) => {
   const formData = new FormData();
@@ -292,11 +240,6 @@ export const uploadChatFile = async (file) => {
 
   return res.json();
 };
-
-
-/* =========================
-   COMPLAINT APIs
-========================= */
 
 export const submitComplaint = async (taskId, message) => {
 
@@ -312,7 +255,6 @@ export const submitComplaint = async (taskId, message) => {
   return res.json();
 };
 
-
 export const getComplaints = async () => {
 
   const res = await fetch(`${API_URL}/complaints`, {
@@ -322,7 +264,6 @@ export const getComplaints = async () => {
 
   return res.json();
 };
-
 
 export const deleteComplaint = async (id) => {
 

@@ -37,13 +37,11 @@ export default function ComplaintCenter() {
       setSuccess("Account review request submitted successfully. You will now be redirected to login...");
       setMessage("");
 
-      // 🔥 Auto logout after complaint submission
       await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
 
-      // Redirect to login after short delay
       setTimeout(() => {
         window.location.href = "/login";
       }, 3000);
@@ -58,8 +56,7 @@ export default function ComplaintCenter() {
   return (
     <div className="min-h-screen bg-background pt-32 pb-12 px-4 flex items-start justify-center">
       <div className="w-full max-w-xl glass-card rounded-[2rem] p-8 md:p-12 relative overflow-hidden border-none shadow-2xl">
-        
-        {/* Decorative background elements */}
+
         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
 

@@ -3,9 +3,7 @@ import Task from "../models/Task.js";
 import { sendEmail } from "../utils/emailService.js";
 import { paginate } from "../utils/paginate.js";
 import Message from "../models/Message.js";
-/* =====================================
-   BAN USER (TEMPORARY OR PERMANENT)
-===================================== */
+
 export const banUser = async (req, res) => {
   try {
     const { reason, days, permanent } = req.body;
@@ -64,9 +62,6 @@ export const banUser = async (req, res) => {
   }
 };
 
-/* =====================================
-   UNBLOCK USER
-===================================== */
 export const unblockUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -98,9 +93,6 @@ export const unblockUser = async (req, res) => {
   }
 };
 
-/* =====================================
-   GET ALL USERS (PAGINATED)
-===================================== */
 export const getAllUsers = async (req, res) => {
   try {
     const { page = 1, limit = 8 } = req.query;
@@ -122,9 +114,6 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-/* =====================================
-   GET ALL TASKS (PAGINATED)
-===================================== */
 export const getAllTasks = async (req, res) => {
   try {
     const { page = 1, limit = 8 } = req.query;
@@ -145,10 +134,6 @@ export const getAllTasks = async (req, res) => {
   }
 };
 
-/* ===============================
-   GET FLAGGED CHAT MESSAGES
-=============================== */
-
 export const getFlaggedMessages = async (req, res) => {
 
   try {
@@ -166,9 +151,7 @@ export const getFlaggedMessages = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch flagged messages" });
 
   }};
-/* =====================================
-   ADVANCED ANALYTICS
-===================================== */
+
 export const getAdminStats = async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();

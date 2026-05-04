@@ -71,13 +71,11 @@ export default function ChatPanel({ taskId, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center sm:justify-end sm:items-stretch bg-background/80 backdrop-blur-sm sm:pr-4 sm:py-4 animate-in fade-in duration-200">
-      
-      {/* Mobile background click to close */}
+
       <div className="absolute inset-0 sm:hidden" onClick={onClose} />
 
       <div className="relative w-full h-full sm:w-[400px] sm:h-auto sm:max-h-[calc(100vh-2rem)] flex flex-col bg-background sm:rounded-[2rem] border border-border shadow-2xl overflow-hidden animate-in slide-in-from-right-4 sm:slide-in-from-right-12 duration-300">
-        
-        {/* HEADER */}
+
         <div className="flex items-center justify-between p-4 sm:p-5 border-b border-border bg-secondary/30 shrink-0">
           <div className="flex items-center gap-3">
              <div className="w-10 h-10 rounded-xl brand-gradient flex items-center justify-center text-white shadow-lg shadow-primary/20"><MessageSquare className="w-5 h-5"/></div>
@@ -97,7 +95,6 @@ export default function ChatPanel({ taskId, onClose }) {
           </button>
         </div>
 
-        {/* MESSAGES BODY */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar bg-card/30">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center p-6">
@@ -120,9 +117,9 @@ export default function ChatPanel({ taskId, onClose }) {
                   {showName && isMine && (
                     <span className="text-xs font-semibold text-primary mb-1 mr-1">You</span>
                   )}
-                  
+
                   <div className={`relative max-w-[85%] rounded-2xl p-3.5 shadow-sm group ${isMine ? "bg-primary text-primary-foreground rounded-tr-sm" : "bg-secondary text-foreground rounded-tl-sm border border-white/5"}`}>
-                    
+
                     {msg.text && (
                       <div className="text-sm leading-relaxed break-words whitespace-pre-wrap">
                         {msg.text}
@@ -140,7 +137,7 @@ export default function ChatPanel({ taskId, onClose }) {
                         <span className="truncate">View Attachment</span>
                       </a>
                     )}
-                    
+
                     <span className={`text-[9px] font-medium absolute -bottom-5 opacity-0 group-hover:opacity-100 transition-opacity ${isMine ? "right-1 text-muted-foreground" : "left-1 text-muted-foreground"}`}>
                         {new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </span>
@@ -152,7 +149,6 @@ export default function ChatPanel({ taskId, onClose }) {
           <div ref={bottomRef} className="h-6"></div>
         </div>
 
-        {/* FILE PREVIEW */}
         {file && (
             <div className="px-4 py-2 border-t border-border bg-secondary/30 flex items-center justify-between">
                 <div className="flex items-center gap-2 overflow-hidden">
@@ -165,10 +161,9 @@ export default function ChatPanel({ taskId, onClose }) {
             </div>
         )}
 
-        {/* INPUT FOOTER */}
         <div className="p-3 border-t border-border bg-background shrink-0">
           <form onSubmit={handleSend} className="flex items-end gap-2 relative bg-secondary/50 rounded-[1.5rem] p-1.5 border border-border focus-within:border-primary/50 focus-within:bg-secondary transition-colors shadow-sm">
-            
+
             <label className="shrink-0 p-2.5 rounded-xl text-muted-foreground hover:bg-background hover:text-foreground cursor-pointer transition-colors m-0.5">
                <input type="file" className="hidden" onChange={(e) => setFile(e.target.files[0])} />
                <Paperclip className="w-5 h-5" />

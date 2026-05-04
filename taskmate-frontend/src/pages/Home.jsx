@@ -14,7 +14,7 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Home() {
   const navigate = useNavigate();
   const user = getUser();
-  
+
   const heroRef = useRef(null);
   const heroTextRef = useRef(null);
   const featuresRef = useRef(null);
@@ -22,7 +22,7 @@ export default function Home() {
   const ctaRef = useRef(null);
 
   useEffect(() => {
-    // Hero Animations
+
     const ctx = gsap.context(() => {
       gsap.fromTo(
         ".hero-element",
@@ -30,7 +30,6 @@ export default function Home() {
         { y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: "power3.out" }
       );
 
-      // Scroll Animations for Features
       gsap.fromTo(
         ".feature-card",
         { y: 50, opacity: 0 },
@@ -47,7 +46,6 @@ export default function Home() {
         }
       );
 
-      // Scroll Animations for How it works
       gsap.fromTo(
         ".step-card",
         { x: -50, opacity: 0 },
@@ -64,7 +62,6 @@ export default function Home() {
         }
       );
 
-      // CTA animation
       gsap.fromTo(
         ctaRef.current,
         { scale: 0.95, opacity: 0 },
@@ -78,7 +75,7 @@ export default function Home() {
       );
     });
 
-    return () => ctx.revert(); // Cleanup
+    return () => ctx.revert(); 
   }, []);
 
   const handleFindVolunteer = () => {
@@ -93,8 +90,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      
-      {/* HERO VIDEO SECTION */}
+
       <section ref={heroRef} className="relative w-full h-[60vh] flex items-center justify-center overflow-hidden bg-background">
         <div className="absolute inset-0 w-full h-full z-0">
           <div className="absolute inset-0 bg-background/20 backdrop-blur-[1px] z-10" />
@@ -111,23 +107,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* HERO TEXT SECTION */}
       <section ref={heroTextRef} className="w-full py-16 bg-background relative z-20 text-center border-b border-white/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8 hero-element">
             <span className="flex h-2 w-2 rounded-full bg-primary" />
             <span className="text-sm font-medium text-muted-foreground">The premier student freelancing platform</span>
           </div>
-          
+
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 hero-element text-foreground">
             Connect. Collaborate. <br className="hidden md:block" />
             <span className="brand-text-gradient">Complete.</span>
           </h1>
-          
+
           <p className="mt-4 text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 hero-element">
             TaskMate is the ethical bridge connecting ambitious students and talented volunteers through a secure, deadline-driven ecosystem.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 hero-element">
             <button 
               onClick={handleFindVolunteer}
@@ -145,7 +140,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* STATS / TRUST SECTION */}
       <section className="py-12 border-y border-white/5 bg-background/50 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -164,11 +158,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURES SECTION */}
       <section ref={featuresRef} className="py-24 relative overflow-hidden">
-        {/* Decorative background blob */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 text-foreground">
@@ -209,7 +201,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
       <section ref={howItWorksRef} className="py-24 bg-secondary/30 border-y border-white/5">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center gap-16">
@@ -220,7 +211,7 @@ export default function Home() {
               <p className="text-lg text-muted-foreground">
                 A streamlined process designed to get your tasks done efficiently while ensuring quality and reliability.
               </p>
-              
+
               <div className="pt-8 space-y-8">
                 {[
                   { title: "Post a Task", desc: "Define your requirements, set a fair budget, and establish a deadline.", icon: <CheckCircle2 className="w-6 h-6 text-primary"/> },
@@ -239,14 +230,13 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            
+
             <div className="lg:w-1/2 w-full step-card">
               <div className="relative w-full aspect-square md:aspect-[4/3] rounded-2xl overflow-hidden glass-card p-2">
                 <div className="w-full h-full bg-background rounded-xl overflow-hidden relative">
                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80')] bg-cover bg-center" />
                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
-                   
-                   {/* Floating UI elements overlay */}
+
                    <div className="absolute bottom-6 left-6 right-6 p-4 rounded-xl bg-background/80 backdrop-blur-md border border-white/10 flex items-center gap-4">
                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                        <Wallet className="w-5 h-5 text-primary"/>
@@ -263,7 +253,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA SECTION */}
       <section className="py-32 relative overflow-hidden">
         <div className="container mx-auto px-4 relative z-10">
           <div ref={ctaRef} className="max-w-4xl mx-auto text-center glass-card p-12 md:p-20 rounded-[3rem] relative overflow-hidden">

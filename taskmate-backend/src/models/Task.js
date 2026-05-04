@@ -62,8 +62,7 @@ paymentStatus: {
 },
   },
   { timestamps: true }
-  
-);
 
+);
 
 export default mongoose.model("Task", taskSchema);
